@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<!-- created by GmapGIS.com -->
+<Document><name>pViewTest file polygon </name><description>Some descrition</description><Style id="polyStyID_0"><LineStyle><color>FF0000FF</color><width>5</width></LineStyle><PolyStyle><color>660088ff</color></PolyStyle> </Style><Placemark><name>Polygon 1</name><description><![CDATA[]]></description><styleUrl>#polyStyID_0</styleUrl><Polygon><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><outerBoundaryIs><LinearRing><coordinates>
+-85.6418,42.25225,0.0
+-85.64176,42.25231,0.0
+-85.64183,42.25233,0.0
+-85.64151,42.25279,0.0
+-85.64148,42.25278,0.0
+-85.64106,42.25341,0.0
+-85.64138,42.25353,0.0
+-85.6418,42.25293,0.0
+-85.64213,42.25243,0.0
+-85.64201,42.25238,0.0
+-85.64204,42.25233,0.0
+</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>
