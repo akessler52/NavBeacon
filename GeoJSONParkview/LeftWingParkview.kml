@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<!-- created by GmapGIS.com -->
+<Document><name>MynameKML file polygon </name><description>Some descrition</description><Style id="polyStyID_0"><LineStyle><color>FF0000FF</color><width>5</width></LineStyle><PolyStyle><color>660088ff</color></PolyStyle> </Style><Placemark><name>Polygon 1</name><description><![CDATA[]]></description><styleUrl>#polyStyID_0</styleUrl><Polygon><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><outerBoundaryIs><LinearRing><coordinates>
+-85.6418,42.25224,0.0
+-85.64177,42.2523,0.0
+-85.64183,42.25233,0.0
+-85.64151,42.25279,0.0
+-85.64147,42.25277,0.0
+-85.64104,42.25341,0.0
+-85.64099,42.25339,0.0
+-85.64074,42.25376,0.0
+-85.64071,42.25375,0.0
+-85.64064,42.25376,0.0
+-85.6406,42.25382,0.0
+-85.64062,42.25385,0.0
+-85.64071,42.25389,0.0
+-85.64071,42.2539,0.0
+-85.64078,42.25393,0.0
+-85.64087,42.25395,0.0
+-85.64091,42.2539,0.0
+-85.64095,42.25391,0.0
+-85.641,42.25383,0.0
+-85.64102,42.25384,0.0
+-85.64104,42.25381,0.0
+-85.64108,42.25382,0.0
+-85.64109,42.25381,0.0
+-85.64133,42.25389,0.0
+-85.64152,42.25359,0.0
+-85.64139,42.25354,0.0
+-85.64144,42.2535,0.0
+-85.64147,42.25346,0.0
+-85.64142,42.25345,0.0
+-85.64173,42.253,0.0
+-85.64175,42.253,0.0
+-85.64182,42.25295,0.0
+-85.64185,42.25291,0.0
+-85.64179,42.2529,0.0
+-85.64212,42.25243,0.0
+-85.64201,42.25238,0.0
+-85.64204,42.25233,0.0
+</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark><Placemark><name>Polygon 2</name><description><![CDATA[]]></description><styleUrl>#polyStyID_0</styleUrl><Polygon><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><outerBoundaryIs><LinearRing><coordinates>
+undefined,,0.0
+</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>
