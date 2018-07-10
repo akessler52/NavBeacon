@@ -24,18 +24,18 @@
 
       function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 11,
+          zoom: 18,
           center: {lat: 42.253218, lng: -85.641337}
         });
 
         var ctaLayer = new google.maps.KmlLayer({
-          url: '',
+          url: 'LeftWingParkview.kml',
           map: map
         });
       }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcgWX6zgaC3ZOFoUBQHVX8LRTJOtE6QEk&callback=initMap">
     </script>
   </body>
 </html>
