@@ -39,6 +39,5 @@
 -85.64212,42.25243,0.0
 -85.64201,42.25238,0.0
 -85.64204,42.25233,0.0
-</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark><Placemark><name>Polygon 2</name><description><![CDATA[]]></description><styleUrl>#polyStyID_0</styleUrl><Polygon><tessellate>1</tessellate><altitudeMode>clampToGround</altitudeMode><outerBoundaryIs><LinearRing><coordinates>
-undefined,,0.0
+-85.6418,42.25224,0.0
 </coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>
