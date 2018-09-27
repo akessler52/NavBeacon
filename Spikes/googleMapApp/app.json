@@ -1,0 +1,21 @@
+{
+  "expo": {
+      "name": "testapp",
+      "icon": "./question_mark.png",
+      "version": "0.0.1",
+      "slug": "test-app",
+      "sdkVersion": "27.0.0",
+      "ios": {
+          "bundleIdentifier": "com.idk.app",
+          "config": {
+            "googleMapsApiKey": "NEEDS API KEY"
+          }
+      },
+      "android": {
+          "package": "com.idk.app",
+          "config": {
+              "googleMaps": { "apiKey": "NEEDS API KEY" }
+           }
+      }
+  }
+}
