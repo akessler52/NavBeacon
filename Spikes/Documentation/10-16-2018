@@ -84,6 +84,6 @@ Kontakt.io React-Native Package:
     - http://www.image-map.net/
     - Not sure this is needed. Seems that every image when placed in react will have
       it's own coordinate system displayed.
-    - Images are in GitHub
+    - Images are in GitHub /Building Floor Plan Files/Building Floor Plans in High Resolution images
     - Need more thought on Zooming into image and moving
     
