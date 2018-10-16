@@ -1,0 +1,15 @@
+Instructions to Compile
+
+Mac OSX:
+  Install HomeBrew
+  brew install node
+  brew install watchman
+Navigate to Newest Map Directory
+  npm install //This will install all the needed Node Modules
+Navigate to NewestMap/ios:
+  Install CocoaPods
+  After Installed run command: pod install 
+Run:
+  Navigate to iOS folder open the .xcworkspace folder and press compile
+
+Linux:
