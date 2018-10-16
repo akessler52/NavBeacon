@@ -1,0 +1,89 @@
+Beacon Positioning Video:
+  https://www.youtube.com/watch?v=n2M_LSPlVOY
+  Demo:
+    https://github.com/jarkko-hautakorpi/iBeacon-indoor-positioning-demo
+
+Beacon App With Pathing and Bounds Creation (WMU Waldo Library):
+  https://github.com/mehdimo/IoT-iBeacon
+
+Beacons Reveal Two Things:
+  UUID - Universally Unique Identifier
+  RSSI - Received Signal Strength Indicator
+
+Kontakt.io React-Native Package:
+  https://github.com/Artirigo/react-native-kontaktio
+
+  iOS Beacon Parameters: https://github.com/Artirigo/react-native-kontaktio/blob/master/docs/api.ios.md
+    //Ranging Or Monitoring//
+    uuid: string
+	  major: number
+	  minor: number
+    rssi: number
+    proximity: string (either IMMEDIATE, NEAR, FAR or UNKNOWN)
+    // if Kontakt.io beacon this is useful, otherwise mostly -1 or similar
+	  accuracy: string (distance in meters)
+
+    //While Discovering//
+    name: string  // 'Kontakt' by default for Kontakt.io beacons
+	  uniqueId: string
+	  firmwareVersion: string
+	  batteryLevel: number (percentage as int) // batteryPower for Android
+	  batteryPowered: boolean
+	  transmissionPower: number  // txPower for Android
+	  hasConfigurationProfile: boolean
+	  shuffled: boolean
+    locked: boolean
+    model: string
+    peripheral: string
+    rssi: number
+    updatedAt: number
+
+  Android Beacon Parameters: https://github.com/Artirigo/react-native-kontaktio/blob/master/docs/api.android.md
+    // each beacon contains:
+    name: string
+    address: string
+    rssi: number
+    proximity: string (either IMMEDIATE, NEAR, FAR or UNKNOWN)
+    // if Kontakt.io beacon this is useful, otherwise mostly -1 or similar
+    accuracy: string (distance in meters)
+    batteryPower: number (percentage as int)
+    txPower: number
+    firmwareVersion: string
+    uniqueId: string
+    isShuffled: string
+    // if its of type IBEACON additionally:
+    uuid: string
+    major: number
+    minor: number
+
+    //Region
+    identifier
+    uuid
+    secureUuid
+    major
+    minor
+
+    Event Flow:
+      1. Detected
+        > regionDidEnter / namespaceDidEnter
+        > beaconDidAppear / eddystoneDidAppear
+      2. Changed:
+        > beaconsDidUpdate / eddystoneDidUpdate_Sent whenever a change in proximity is detected.
+        This Event is sent separately for each currently scanned region if at least one of its beacons has changed.
+      3. Lost
+        > beaconDidDisappear / eddystoneDidDisappear
+        > regionDidExit / namespaceDidExit
+
+  Basic Idea of how to do app design:
+    https://github.com/lyzs90/reactNativeBeacons/blob/master/App/Root.js
+
+  Kontakt.io iOS Beacon Test Program
+    https://github.com/Artirigo/react-native-kontaktio/blob/master/Example/src/Example.ios.js
+
+  Image-Mapping:
+    - http://www.image-map.net/
+    - Not sure this is needed. Seems that every image when placed in react will have
+      it's own coordinate system displayed.
+    - Images are in GitHub
+    - Need more thought on Zooming into image and moving
+    
