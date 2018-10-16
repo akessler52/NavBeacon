@@ -1,0 +1,7 @@
+-Remove Node_Modules
+
+-Navigate to ios
+  Remove PodFiles
+  Remove Build
+
+Zip Up and Push
