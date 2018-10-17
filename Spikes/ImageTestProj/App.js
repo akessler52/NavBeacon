@@ -3,11 +3,22 @@ import { StyleSheet, Text, View, AppRegistry, Image } from 'react-native';
 
 
 export default class App extends React.Component {
+  /*getCoords(event)
+  {
+    let rect= event.getClientBoundingRect();
+    let mouses = {
+      x: event.clientX,
+      y: event.clientY
+    }
+
+    console.log(rect,mouses);
+  }*/
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <Image
-          style={styles.canvas}
+          //style={styles.canvas}
+          onMouseOver={this.getCoords.bind(this)}
           source={require('/Users/ryanhamilton/Documents/GitHub/NavBeacon/ImageTestProj/1stFloorPlan.png')}
         />
       </View>
@@ -23,11 +34,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative'
   },
-  canvas: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
+  /*canvas: {
+   position: 'relative',
+   width: '100%',
+   height: 'auto',
+   top: 0,
+   left: 0,
+   bottom: 0,
+   right: 0,
+ },*/
 });
