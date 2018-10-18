@@ -93,7 +93,7 @@ class App extends React.Component {
   renderGoogleSwitch() {
     return (
       <View>
-        <Text>Use GoogleMaps?</Text>
+        <Text>Use MyDad?</Text>
         <Switch
           onValueChange={(value) => this.setState({ useGoogleMaps: value })}
           style={{ marginBottom: 10 }}
