@@ -13,14 +13,14 @@ const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE = 42.254254;
 const LONGITUDE = -85.640700;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE_DELTA = 0.0052;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 // 116423, 51613, 17
 const OVERLAY_TOP_LEFT_COORDINATE1 = [42.254951, -85.638367];
 const OVERLAY_BOTTOM_RIGHT_COORDINATE1 = [42.252245, -85.641811];
 const IMAGE_URL1 = 'https://i.imgur.com/M3RANrD.png';
 
-export default class ImageOverlayWithURL extends Component {
+export default class ImageOverlay extends Component {
 
   static propTypes = {
     provider: MapView.ProviderPropType,

@@ -6,22 +6,18 @@ import {
 } from 'react-native';
 
 import MapView from 'react-native-maps';
-
+import {PROVIDER_GOOGLE} from 'react-native-maps';
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE = 35.679976;
-const LONGITUDE = 139.768458;
-const LATITUDE_DELTA = 0.01;
+const LATITUDE = 42.254254;
+const LONGITUDE = -85.640700;
+const LATITUDE_DELTA = 0.0052;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 // 116423, 51613, 17
-const OVERLAY_TOP_LEFT_COORDINATE1 = [35.68184060244454, 139.76531982421875];
-const OVERLAY_BOTTOM_RIGHT_COORDINATE1 = [35.679609609368576, 139.76806640625];
-const IMAGE_URL1 = 'https://maps.gsi.go.jp/xyz/std/17/116423/51613.png';
-// 116423, 51615, 17
-const OVERLAY_TOP_LEFT_COORDINATE2 = [35.67737855391474, 139.76531982421875];
-const OVERLAY_BOTTOM_RIGHT_COORDINATE2 = [35.67514743608467, 139.76806640625];
-const IMAGE_URL2 = 'https://maps.gsi.go.jp/xyz/std/17/116423/51615.png';
+const OVERLAY_TOP_LEFT_COORDINATE1 = [42.25206558, -85.64283689];
+const OVERLAY_BOTTOM_RIGHT_COORDINATE1 = [42.25498596, -85.63750822];
+const IMAGE_URL1 = 'file:///Users/ryanhamilton/MapFiles/{z}/{x}/{y}.png';
 
 export default class ImageOverlayWithURL extends Component {
 
@@ -43,10 +39,6 @@ export default class ImageOverlayWithURL extends Component {
         bounds: [OVERLAY_TOP_LEFT_COORDINATE1, OVERLAY_BOTTOM_RIGHT_COORDINATE1],
         image: IMAGE_URL1,
       },
-      overlay2: {
-        bounds: [OVERLAY_TOP_LEFT_COORDINATE2, OVERLAY_BOTTOM_RIGHT_COORDINATE2],
-        image: IMAGE_URL2,
-      },
     };
   }
 
@@ -61,11 +53,7 @@ export default class ImageOverlayWithURL extends Component {
           <MapView.Overlay
             bounds={this.state.overlay1.bounds}
             image={this.state.overlay1.image}
-            zindex={2}
-          />
-          <MapView.Overlay
-            bounds={this.state.overlay2.bounds}
-            image={this.state.overlay2.image}
+            //zindex={2}
           />
         </MapView>
       </View>

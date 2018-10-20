@@ -16,10 +16,13 @@ import MapView, {
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE = 37.78825;
-const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE = 42.254254;
+const LONGITUDE = -85.640700;
+const LATITUDE_DELTA = 0.0052;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+// 116423, 51613, 17
+//const OVERLAY_TOP_LEFT_COORDINATE1 = [42.25206558, -85.64283689];
+//const OVERLAY_BOTTOM_RIGHT_COORDINATE1 = [42.25498596, -85.63750822];
 
 class CustomTiles extends React.Component {
   constructor(props, context) {
@@ -52,7 +55,7 @@ class CustomTiles extends React.Component {
           initialRegion={region}
         >
           <LocalTile
-            pathTemplate="/path/to/locally/saved/tiles/{z}/{x}/{y}.png"
+            pathTemplate="/Users/ryanhamilton/GitHub/NavBeacon/Spikes/NewestMap/MapFiles/{z}/{x}/{y}.png"
             tileSize={256}
             zIndex={-1}
           />
