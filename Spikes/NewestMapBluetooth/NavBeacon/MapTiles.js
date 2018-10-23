@@ -1,33 +1,24 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
+  Text,
   Dimensions,
 } from 'react-native';
 
-import MapView from 'react-native-maps'; //Neeed import for the map
+import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile } from 'react-native-maps';
 
-//Should Set the Window Dimensions
 const { width, height } = Dimensions.get('window');
-//Building Coordinates
+
 const ASPECT_RATIO = width / height;
 const LATITUDE = 42.254254;
 const LONGITUDE = -85.640700;
 const LATITUDE_DELTA = 0.0052;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-// 116423, 51613, 17
-const OVERLAY_TOP_LEFT_COORDINATE1 = [42.254951, -85.638367];
-const OVERLAY_BOTTOM_RIGHT_COORDINATE1 = [42.252245, -85.641811];
-const IMAGE_URL1 = 'https://i.imgur.com/M3RANrD.png';
 
-export default class ImageOverlay extends Component {
-
-  static propTypes = {
-    provider: MapView.ProviderPropType,
-  };
-
-  constructor(props) {
-    super(props);
+class MapTiles extends React.Component {
+  constructor(props, context) {
+    super(props, context);
 
     this.state = {
       region: {
@@ -36,25 +27,28 @@ export default class ImageOverlay extends Component {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      overlay1: {
-        bounds: [OVERLAY_TOP_LEFT_COORDINATE1, OVERLAY_BOTTOM_RIGHT_COORDINATE1],
-        image: IMAGE_URL1,
-      }
     };
   }
 
+  /*get mapType() {
+    // MapKit does not support 'none' as a base map
+    return this.props.provider === PROVIDER_DEFAULT ?
+      MAP_TYPES.STANDARD : MAP_TYPES.NONE;
+  }*/
+
   render() {
+    const { region } = this.state;
     return (
       <View style={styles.container}>
         <MapView
           provider={this.props.provider}
+          mapType={this.mapType}
           style={styles.map}
-          initialRegion={this.state.region}
+          initialRegion={region}
         >
-          <MapView.Overlay
-            bounds={this.state.overlay1.bounds}
-            image={this.state.overlay1.image}
-            zindex={2}
+          <UrlTile
+            urlTemplate="http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg"
+            zIndex={-1}
           />
         </MapView>
       </View>
@@ -62,16 +56,29 @@ export default class ImageOverlay extends Component {
   }
 }
 
+MapTiles.propTypes = {
+  provider: ProviderPropType,
+};
+
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   bubble: {
+    flex: 1,
     backgroundColor: 'rgba(255,255,255,0.7)',
     paddingHorizontal: 18,
     paddingVertical: 12,
@@ -93,3 +100,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
 });
+
+export default MapTiles;

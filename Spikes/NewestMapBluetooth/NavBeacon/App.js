@@ -7,28 +7,24 @@
 import React, { Component } from 'react';
 import {
   Platform,
+  View,
   StyleSheet,
+  TouchableOpacity,
+  ScrollView,
   Text,
-  View
 } from 'react-native';
 
-import ImageOverlay from './ImageOverlay'; //Import Class for Image
+import MapTiles from './MapTiles'; //Import Class for MapTiles
+import { PROVIDER_GOOGLE } from 'react-native-maps';
 const IOS = Platform.OS === 'ios';
 const ANDROID = Platform.OS === 'android';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
 type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        ImageOverlay.addEventListener(self.)
+        <MapTiles />
       </View>
     );
   }
