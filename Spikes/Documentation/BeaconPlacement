@@ -1,0 +1,38 @@
+Beacon Placement:
+
+Don’t put the Beacons on objects that could potentially block their signal
+Leave enough space between the Beacons, approximately one every 8-10 meters
+Place the Beacons in close proximity to the smartphone users. Don’t put them up too high on the wall, ideally 3-4 meters from the ground.
+
+Bigger, open spaces (e.g. exhibition halls or the central square of a shopping mall) often require more adjustments and fine tuning when it comes to Beacon positioning and signal strength. On the other hand, venues with clearly differentiated pathways (e.g. hospitals or office spaces) will usually be more straightforward. Therefore, keep in mind you need to plan your on-site activities accordingly.
+
+Certain materials and objects should be avoided in your Beacon installation, as they may cause a Bluetooth signal interference. Some of these signal-blocking materials are metal, concrete, but also objects such as microwaves or poorly shielded cables. Apple has created a list of potential sources of Bluetooth interferences for you to check.
+
+-Use the beacons only in the areas where navigation is required.
+-Install the beacons above the head level at the height between 2 and 4 meters. The best practice is to fasten beacons on the ceiling.
+-In the case when the recommended beacon installation place is unavailable (for example, the ceiling is too high), you can attach the beacons to the walls.
+-Use 1 beacon for the locations smaller than 25 square meters.
+-Place the beacons evenly across the location, still do not put them on the same direct line.
+-The more beacons you use, the higher the accuracy level is. Consider using 8-15 beacons per 1000 square meters.
+-DO NOT put beacons behind metal objects and/or any other obstacles, otherwise the beacon's usefulness will be tending to zero.
+
+Beacon Maintenance:
+
+Beacon batteries usually last around three years, before they need to be replaced. Depending on your industry and use case, the amount of Beacons installed may range from 50 for smaller installations to 1,500 Beacons for large event exhibitions.
+
+Especially in the latter case, you will wish for a system to inform you exactly which Beacon needs to be replaced.
+
+In order to avoid a situation where too many Beacons fail at once, risking a system crash, you should always keep track of your Beacons and know which ones are low on battery beforehand to make according arrangements proactively, i.e. order new Beacons.
+
+Both indoo.rs and Kontakt.io provide Beacon Infrastructure Management systems, which allows you to keep track of each Beacon, including battery status and location inside the building, making it easy to maintain the setup.\
+
+Beacon Setup:
+https://www.navigine.com/is_ibeacon_configuration.html
+Make sure that the beacons are in iBeacon mode and the signal transmit power is set to`` -12dbm``.
+
+By default the Kontakt.io beacons are set to travel mode and have minimal transmit power for power saving purposes. In the beacon transmit power options choose the 3-rd value, which corresponds to -12dbm and range up to 40 meters.
+
+Proximity UUID - the kontakt.io beacon identifier (keep default)
+major - beacon major identifier (keep default)
+minor - beacon minor identifier (keep default)
+TxPower - power of a beacon's transmit signal. Values: from 1 to 7, where 1 corresponds to 5 meters, and 7 - to 70 meters. The higher the specified value is, the more power consumes the beacon.

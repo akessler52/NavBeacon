@@ -1,0 +1,2 @@
+Add before using beacons
+  Beacons.requestAlwaysAuthorization();
