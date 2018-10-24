@@ -6,17 +6,17 @@ import {
   Dimensions,
 } from 'react-native';
 
-import MapView, { MAP_TYPES, PROVIDER_DEFAULT, ProviderPropType, UrlTile } from 'react-native-maps';
+import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile } from 'react-native-maps';
 
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE = 37.78825;
-const LONGITUDE = -122.4324;
-const LATITUDE_DELTA = 0.0922;
+const LATITUDE = 42.254254;
+const LONGITUDE = -85.640700;
+const LATITUDE_DELTA = 0.0052;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-class CustomTiles extends React.Component {
+class MapTiles extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -30,11 +30,11 @@ class CustomTiles extends React.Component {
     };
   }
 
-  get mapType() {
+  /*get mapType() {
     // MapKit does not support 'none' as a base map
     return this.props.provider === PROVIDER_DEFAULT ?
       MAP_TYPES.STANDARD : MAP_TYPES.NONE;
-  }
+  }*/
 
   render() {
     const { region } = this.state;
@@ -47,21 +47,16 @@ class CustomTiles extends React.Component {
           initialRegion={region}
         >
           <UrlTile
-            urlTemplate="http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg"
+            urlTemplate="file:///Users/ryanhamilton/GitHub/NavBeacon/Spikes/NewestMapBluetooth/MapFiles/{z}/{x}/{y}.png"
             zIndex={-1}
           />
         </MapView>
-        <View style={styles.buttonContainer}>
-          <View style={styles.bubble}>
-            <Text>Custom Tiles</Text>
-          </View>
-        </View>
       </View>
     );
   }
 }
 
-CustomTiles.propTypes = {
+MapTiles.propTypes = {
   provider: ProviderPropType,
 };
 
@@ -106,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomTiles;
+export default MapTiles;

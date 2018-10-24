@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './example/App';
+import App from './NavBeacon/App';
 
 AppRegistry.registerComponent('NavBeaconProj', () => App);

@@ -1,0 +1,5 @@
+We Expect To Have
+    A Tiled Map with Beacons placed based on latitude and longitude with user position being updated on the map with a .png image with a transparent background and a path for the user to navigate to rooms across while storing the door they entered from to return them to that position.
+
+What We Would Want To Have if Possible
+    Smoothing between beacons

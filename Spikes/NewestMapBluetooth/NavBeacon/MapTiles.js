@@ -47,7 +47,7 @@ class MapTiles extends React.Component {
           initialRegion={region}
         >
           <UrlTile
-            urlTemplate="http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg"
+            urlTemplate="file:///Users/ryanhamilton/GitHub/NavBeacon/Spikes/NewestMapBluetooth/MapFiles/{z}/{x}/{y}.png"
             zIndex={-1}
           />
         </MapView>
