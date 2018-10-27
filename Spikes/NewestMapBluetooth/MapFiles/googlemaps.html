@@ -35,7 +35,7 @@ var mapBounds = new google.maps.LatLngBounds(
 var mapMinZoom = 16;
 var mapMaxZoom = 21;
 var maptiler = new google.maps.ImageMapType({
-    getTileUrl: function(coord, zoom) { 
+    getTileUrl: function(coord, zoom) {
         var proj = map.getProjection();
         var z2 = Math.pow(2, zoom);
         var tileXSize = 256 / z2;

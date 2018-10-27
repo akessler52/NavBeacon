@@ -6,18 +6,18 @@ import {
 } from 'react-native';
 
 import MapView from 'react-native-maps';
-import flagPinkImg from './assets/flag-pink.png';
+import flagPinkImg from './assets/214_02_FloorplanOverlay.png';
 
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
-const LATITUDE = 35.679976;
-const LONGITUDE = 139.768458;
-const LATITUDE_DELTA = 0.01;
+const LATITUDE = 42.254254;
+const LONGITUDE = -85.640700;
+const LATITUDE_DELTA = 0.0052;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 // 116423, 51613, 17
-const OVERLAY_TOP_LEFT_COORDINATE = [35.68184060244454, 139.76531982421875];
-const OVERLAY_BOTTOM_RIGHT_COORDINATE = [35.679609609368576, 139.76806640625];
+const OVERLAY_TOP_LEFT_COORDINATE = [42.252066, -85.642837];
+const OVERLAY_BOTTOM_RIGHT_COORDINATE = [42.254986, -85.637508];
 const IMAGE = flagPinkImg;
 
 export default class ImageOverlayWithURL extends Component {

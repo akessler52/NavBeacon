@@ -10,6 +10,11 @@ import {
 
 import MapTiles from './MapTiles'; //Import Class for MapTiles
 import { PROVIDER_GOOGLE } from 'react-native-maps';
+import Beacons from 'react-native-beacons-manager';
+import BluetoothState from 'react-native-bluetooth-state'
+import { hashCode, deepCopyBeaconsLists } from './helpers'; //Helper file for the Beacons
+import moment from 'moment';
+
 const IOS = Platform.OS === 'ios';
 const ANDROID = Platform.OS === 'android';
 

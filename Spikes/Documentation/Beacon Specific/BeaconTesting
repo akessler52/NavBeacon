@@ -1,0 +1,6 @@
+Ranging:
+  1.When Beacons are placed in a line within 1 meter closest beacon will continually flip which is closest
+  2.When Placing beacons in different rooms the results are very good and the phone can easily tell which is closest
+  3.When Placing a single beacon on the ceiling (1 in Another room and one on the opposite side of the room on heater vent) the results get even better. The range is slightly off as there is a distance from the phone to the ceiling (Not enough to be worried about). But there is much less flip between other devices that are further away.
+  4.100ms interval is far too fast and will return Unknown distance often
+  5.200ms interval is better but will still occasionally flip to Unknown distance

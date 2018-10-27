@@ -41,13 +41,13 @@ class MapTiles extends React.Component {
     return (
       <View style={styles.container}>
         <MapView
-          provider={this.props.provider}
+          provider={PROVIDER_GOOGLE}
           mapType={this.mapType}
           style={styles.map}
           initialRegion={region}
         >
           <UrlTile
-            urlTemplate="file:///Users/ryanhamilton/GitHub/NavBeacon/Spikes/NewestMapBluetooth/MapFiles/{z}/{x}/{y}.png"
+            urlTemplate="`${FileSystem.documentDirectory}MapFiles/{z}/{x}/{y}.png`"
             zIndex={-1}
           />
         </MapView>

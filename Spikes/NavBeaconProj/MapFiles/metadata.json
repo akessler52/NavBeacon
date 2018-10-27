@@ -1,0 +1,13 @@
+{
+  "name": "MapFiles",
+  "version": "1.1.0",
+  "description": "",
+  "attribution": "Rendered with <a href=\"https://www.maptiler.com/\">MapTiler</a>",
+  "type": "overlay",
+  "format": "png",
+  "minzoom": "16",
+  "maxzoom": "21",
+  "scale": "1.000000",
+  "bounds": [-85.64283689, 42.25206558, -85.63750822, 42.25498596],
+  "profile": "mercator"
+}
