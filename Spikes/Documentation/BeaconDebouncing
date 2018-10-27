@@ -1,0 +1,2 @@
+When getting the closest beacon to user (some functionality does this automatically by placeing it at the top of the array of beacons) the closest beacon
+will often flip to unknows as an unknown beacons distance is set to -1.00 meters. The simple solution is make sure distance to becon is greater then 0.
