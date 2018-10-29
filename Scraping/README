@@ -1,0 +1,9 @@
+This directory contains the scripts to scrape all of the faculty information off of the wmich.edu department websites.
+
+There is the option to write the information scraped in to a .csv document titled directory.csv or to write the information to a database file
+
+To run the script here are the commands:
+
+make -> runs script for both the csv file and the data base
+make csv -> runs script to write to csv file
+make db -> runs script to write to a database
