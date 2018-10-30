@@ -1,0 +1,3 @@
+a file in node moduals needs to be modified.
+This file gets reset when npm install is run and so needs to be changed again
+Go into libraries/RNBluetoothState.xcodeprodj/RNBluetoothState.h change `#import "RCTBridgeModual.h"` to `#import "react/RCTBridgeModual.h"`
