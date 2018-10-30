@@ -1,0 +1,4 @@
+react-native unlink react
+react-native unlink react-native
+react-native unlink react-native-beacons-manager
+react-native unlink react-native-bluetooth-state

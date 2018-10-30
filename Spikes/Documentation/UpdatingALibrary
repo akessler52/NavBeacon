@@ -1,0 +1,5 @@
+Step 1: Backup the Existing Directory (Better to be safe than sorry)
+Step 2: Unlink the library with react-native unlink NameOfLibrary
+Step 3: Look at the package.json file for the Version
+Step 4: Modify the Version in the package.json file to the version you want.
+Step 5: Run npm install (Or For yarn Run "yarn install" )
