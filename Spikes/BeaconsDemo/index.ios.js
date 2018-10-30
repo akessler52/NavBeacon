@@ -118,7 +118,7 @@ class BeaconsDemo extends Component {
     );
   }
 }
-
+      //<MapTiles/>
 const styles = StyleSheet.create({
   container: {
     flex: 1,
