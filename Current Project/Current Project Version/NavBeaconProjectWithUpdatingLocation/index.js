@@ -9,7 +9,7 @@ import moment from 'moment';
 import { hashCode, deepCopyBeaconsLists } from './helpers';
 
 //New MapTiles Import
-import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile, Marker } from 'react-native-maps';
+import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile, Marker,Polyline } from 'react-native-maps';
 const { width, height } = Dimensions.get('window');
 
 //MapTiles Lat and Long
@@ -21,21 +21,19 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 //List Of Beacons With Corresponding Latitude/Longitude and floor number
 var BeaconsLocList = [
-  {Minor: 1, Major: 0, Lat: 42.252824, Long: -85.641454, KontaktID: "pM83", Floor: 2},
-  {Minor: 2, Major: 0, Lat: 42.252873, Long: -85.641522, KontaktID: "7jSV", Floor: 2},
-  {Minor: 3, Major: 0, Lat: 42.252934, Long: -85.641554, KontaktID: "GUqH", Floor: 2},
-  {Minor: 4, Major: 0, Lat: 42.252996, Long: -85.641509, KontaktID: "uBAv", Floor: 2},
-  {Minor: 5, Major: 0, Lat: 42.253061, Long: -85.641468, KontaktID: "dwva", Floor: 2},
-  {Minor: 6, Major: 0, Lat: 42.253126, Long: -85.641425, KontaktID: "b3Ay", Floor: 2},
-  {Minor: 7, Major: 0, Lat: 42.25319, Long: -85.641378, KontaktID: "sK5Q", Floor: 2},
-  {Minor: 8, Major: 0, Lat: 42.253253, Long: -85.64133, KontaktID: "7oXx", Floor: 2},
-  {Minor: 9, Major: 0, Lat: 42.253317, Long: -85.641288, KontaktID: "Fma5", Floor: 2},
-  {Minor: 10, Major: 0, Lat: 42.253406, Long: -85.641233, KontaktID: "vRWR", Floor: 2},
-  {Minor: 11, Major: 0, Lat: 42.252934, Long: -85.641554, KontaktID: "GEWh", Floor: 2},
-  {Minor: 12, Major: 0, Lat: 42.253463, Long: -85.641184, KontaktID: "0dms", Floor: 2},
+  {Minor: 1, Major: 0, Lat: 42.252836, Long: -85.641453, KontaktID: "pM83", Floor: 2, Distance: 0},
+  {Minor: 2, Major: 0, Lat: 42.252885, Long: -85.641588, KontaktID: "7jSV", Floor: 2, Distance: 0},
+  {Minor: 3, Major: 0, Lat: 42.25295, Long: -85.641547, KontaktID: "GUqH", Floor: 2, Distance: 0},
+  {Minor: 4, Major: 0, Lat: 42.253015, Long: -85.641506, KontaktID: "uBAv", Floor: 2, Distance: 0},
+  {Minor: 5, Major: 0, Lat: 42.25308, Long: -85.641465, KontaktID: "dwva", Floor: 2, Distance: 0},
+  {Minor: 6, Major: 0, Lat: 42.253145, Long: -85.641424, KontaktID: "b3Ay", Floor: 2, Distance: 0},
+  {Minor: 7, Major: 0, Lat: 42.25321, Long: -85.641383, KontaktID: "sK5Q", Floor: 2, Distance: 0},
+  {Minor: 8, Major: 0, Lat: 42.253275, Long: -85.641342, KontaktID: "7oXx", Floor: 2, Distance: 0},
+  {Minor: 9, Major: 0, Lat: 42.25334, Long: -85.641301, KontaktID: "Fma5", Floor: 2, Distance: 0},
+  {Minor: 10, Major: 0, Lat: 42.253405, Long: -85.64126, KontaktID: "vRWR", Floor: 2, Distance: 0},
+  {Minor: 11, Major: 0, Lat: 42.25347, Long: -85.641219, KontaktID: "GEWh", Floor: 2, Distance: 0},
+  {Minor: 12, Major: 0, Lat: 42.253535, Long: -85.641178, KontaktID: "0dms", Floor: 2, Distance: 0},
 ];
-
-var minorVal = 1;
 // #endregion
 
 // #region flow types
@@ -123,6 +121,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
     }).cloneWithRowsAndSections(EMPTY_BEACONS_LISTS),
 
     beaconsArr: [],
+    polyLinePath: []
   };
 
   componentWillMount() {
@@ -182,15 +181,29 @@ class reactNativeBeaconExample extends Component<Props, State> {
       },
     );
 
+    // // Ranging: Listen for beacon changes
+    // this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
+    //   'beaconsDidRange',
+    //   ({region: {identifier, uuid}, beacons}) => {
+    //     // do here anything you need (ex: setting state...)
+    //     const Beacons = this.updateBeaconList(beacons);
+    //     //this.state.beaconsArr = Beacons['rangingList']; //This will pass just the list itself without the rangingList tag
+    //     minorVal = Beacons['rangingList'][0].minor;
+    //     console.log('beaconsDidRange these beacons: ', Beacons['rangingList']);
+    //     //To Reference Beacons:
+    //     //Beacons['rangingList'][index].variableNeeded
+    //   }
+    // );
+
     // Ranging: Listen for beacon changes
     this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
       'beaconsDidRange',
       ({region: {identifier, uuid}, beacons}) => {
-        // do here anything you need (ex: setting state...)
         const Beacons = this.updateBeaconList(beacons);
-        //this.state.beaconsArr = Beacons['rangingList']; //This will pass just the list itself without the rangingList tag
-        minorVal = Beacons['rangingList'][0].minor;
-        console.log('beaconsDidRange these beacons: ', Beacons['rangingList'][0].minor);
+        this.setState({ beaconsArr: Beacons['rangingList'] });
+        //this.state.beaconsArr = Beacons['rangingList'];
+        // do here anything you need (ex: setting state...)
+        //console.log('beaconsDidRange these beacons: ', this.state.beaconsArr);
         //To Reference Beacons:
         //Beacons['rangingList'][index].variableNeeded
       }
@@ -276,23 +289,24 @@ class reactNativeBeaconExample extends Component<Props, State> {
     this.beaconsDidRangeEvent.remove();
   }
 
-  searchBeaconList(Minor) { //Searches through the beacons list and returns the Beacon Object with Lat and Long
-    console.log("searchBeaconList Minor", Minor);
-    var i;
-    var BeaconToReturn;
-    for(i=0; i < BeaconsLocList.length; i++)
+//Searches through the beacons list and returns the Beacon Object with Lat and Long
+  setMarkerToPosition() {
+
+    var BeaconToReturn = [];
+    BeaconToReturn = this.findBeaconsClosest();
+
+    if(BeaconToReturn.length == 0)
     {
-      if(BeaconsLocList[i].Minor == Minor)
-      {
-        BeaconToReturn = BeaconsLocList[i];
-      }
+      var NewMarker = Marker.coordinate = null;
     }
-
-    var NewMarker = Marker.coordinate = {
-      latitude: BeaconToReturn.Lat, //May need to be BeaconToReturn["Lat"]
-      longitude: BeaconToReturn.Long, //May need to be BeaconToReturn["Long"]
-    };
-
+    else {
+      //console.log("ELSE: ", BeaconArray[0]);
+      //BeaconToReturn = this.findBeaconsClosest();
+      var NewMarker = Marker.coordinate = {
+        latitude: BeaconToReturn[0].Lat, //May need to be BeaconToReturn["Lat"]
+        longitude: BeaconToReturn[0].Long, //May need to be BeaconToReturn["Long"]
+      };
+    }
     /* For Reference LatLong is a Marker Type
       type LatLng {
       latitude:
@@ -303,9 +317,66 @@ class reactNativeBeaconExample extends Component<Props, State> {
 
   };
 
+  findBeaconsClosest() {
+    var i=0;
+    var BeaconToReturn = [];
+
+    if(this.state.beaconsArr === undefined || this.state.beaconsArr.length == 0)
+    {//If the Array is undefined or length is 0 return NULL handle this in the coordinate marker call
+      BeaconToReturn = [];
+    }
+    else
+    {
+      do{
+          BeaconToReturn[0] = BeaconsLocList[this.state.beaconsArr[i].minor-1];
+          BeaconToReturn[0].Distance = this.state.beaconsArr[i].accuracy;
+          console.log("Beacon Array position",i);
+          if(i < this.state.beaconsArr.length-1)
+          {
+            BeaconToReturn[1] = BeaconsLocList[this.state.beaconsArr[i+1].minor-1];
+            BeaconToReturn[1].Distance = this.state.beaconsArr[i+1].accuracy;
+          }
+
+      }while(this.state.beaconsArr[i++].accuracy < 0 && i < this.state.beaconsArr.length-1);
+      console.log("BeaconToReturn", BeaconToReturn);
+    }
+
+    return BeaconToReturn;
+  }
+
+  createPathArray() {
+    var i;
+    var coordinate = new Object();
+
+    for(i=0;i < BeaconsLocList.length; i++)
+    {
+      coordinate = {latitude: BeaconsLocList[i].Lat, longitude: BeaconsLocList[i].Long}
+      //console.log("Coordinate Object: ",coordinate);
+      this.state.polyLinePath.push(coordinate);
+    }
+
+  };
+
+  createPath() {
+    var userPathArr = [];
+
+    var BeaconToReturn1 = this.findBeaconsClosest();
+    //BeaconToReturn2 = this.findBeaconsClosest();
+    if(BeaconToReturn1.length == 0)
+    {
+      userPathArr = [];
+    }
+    else
+    {
+      userPathArr = this.state.polyLinePath.slice([BeaconToReturn1[0].Minor-1],this.state.polyLinePath.length);
+    }
+
+    return userPathArr;
+  }
+
   render() {
-    const { bluetoothState, beaconsLists, message, beaconsArr} = this.state;
-    //console.log("HEERE",beaconsArr);
+    const { bluetoothState, beaconsLists, message} = this.state;
+    this.createPathArray();
     return (
       <View style={styles.container}>
         <MapView
@@ -315,15 +386,20 @@ class reactNativeBeaconExample extends Component<Props, State> {
           initialRegion={this.mapState.region}
         >
           <UrlTile
-            urlTemplate="file:///Users/ryanhamilton/GitHub/NavBeacon/Spikes/BeaconDemoToRefactor/MapFiles/{z}/{x}/{y}.png"
+            urlTemplate="file:///./assests/MapFiles/{z}/{x}/{y}.png"
             zIndex={-1}
           />
           <Marker
             /*title={marker.key}
             image={flagPinkImg}
             key={marker.key}*/
-            coordinate = {this.searchBeaconList(minorVal)}
+            coordinate = {this.setMarkerToPosition()}
           />
+          <Polyline
+        		coordinates= {this.state.polyLinePath}
+        		strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+        		strokeWidth={6}
+	      />
         </MapView>
       </View>
     );
