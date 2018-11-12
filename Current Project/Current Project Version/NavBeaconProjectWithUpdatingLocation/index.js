@@ -2,7 +2,7 @@
 
 // #region imports
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, View, Text, ListView, DeviceEventEmitter, Dimensions } from 'react-native';
+import { AppRegistry, StyleSheet, View, Text, ListView, DeviceEventEmitter, Dimensions, Image, TouchableOpacity, Alert } from 'react-native';
 import Beacons from 'react-native-beacons-manager';
 import BluetoothState from 'react-native-bluetooth-state';
 import moment from 'moment';
@@ -11,7 +11,7 @@ import { hashCode, deepCopyBeaconsLists } from './helpers';
 //New MapTiles Import
 import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile, Marker,Polyline } from 'react-native-maps';
 const { width, height } = Dimensions.get('window');
-
+//import positionMarker from './position.png'
 //MapTiles Lat and Long
 const ASPECT_RATIO = width / height;
 const LATITUDE = 42.254254;
@@ -21,21 +21,24 @@ const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 //List Of Beacons With Corresponding Latitude/Longitude and floor number
 var BeaconsLocList = [
-  {Minor: 1, Major: 0, Lat: 42.252836, Long: -85.641453, KontaktID: "pM83", Floor: 2, Distance: 0},
-  {Minor: 2, Major: 0, Lat: 42.252885, Long: -85.641588, KontaktID: "7jSV", Floor: 2, Distance: 0},
-  {Minor: 3, Major: 0, Lat: 42.25295, Long: -85.641547, KontaktID: "GUqH", Floor: 2, Distance: 0},
-  {Minor: 4, Major: 0, Lat: 42.253015, Long: -85.641506, KontaktID: "uBAv", Floor: 2, Distance: 0},
-  {Minor: 5, Major: 0, Lat: 42.25308, Long: -85.641465, KontaktID: "dwva", Floor: 2, Distance: 0},
-  {Minor: 6, Major: 0, Lat: 42.253145, Long: -85.641424, KontaktID: "b3Ay", Floor: 2, Distance: 0},
-  {Minor: 7, Major: 0, Lat: 42.25321, Long: -85.641383, KontaktID: "sK5Q", Floor: 2, Distance: 0},
-  {Minor: 8, Major: 0, Lat: 42.253275, Long: -85.641342, KontaktID: "7oXx", Floor: 2, Distance: 0},
-  {Minor: 9, Major: 0, Lat: 42.25334, Long: -85.641301, KontaktID: "Fma5", Floor: 2, Distance: 0},
-  {Minor: 10, Major: 0, Lat: 42.253405, Long: -85.64126, KontaktID: "vRWR", Floor: 2, Distance: 0},
-  {Minor: 11, Major: 0, Lat: 42.25347, Long: -85.641219, KontaktID: "GEWh", Floor: 2, Distance: 0},
-  {Minor: 12, Major: 0, Lat: 42.253535, Long: -85.641178, KontaktID: "0dms", Floor: 2, Distance: 0},
+  {Minor: 1, Major: 0, Lat: 42.25285589, Long: -85.6415303, KontaktID: "pM83", Floor: 2, Distance: 0},
+  {Minor: 2, Major: 0, Lat: 42.25289476, Long: -85.64162627, KontaktID: "7jSV", Floor: 2, Distance: 0},
+  {Minor: 3, Major: 0, Lat: 42.25296, Long: -85.641582, KontaktID: "GUqH", Floor: 2, Distance: 0},
+  {Minor: 4, Major: 0, Lat: 42.25302524, Long: -85.64153773, KontaktID: "uBAv", Floor: 2, Distance: 0},
+  {Minor: 5, Major: 0, Lat: 42.25309048, Long: -85.64149345, KontaktID: "dwva", Floor: 2, Distance: 0},
+  {Minor: 6, Major: 0, Lat: 42.25315571, Long: -85.64144918, KontaktID: "b3Ay", Floor: 2, Distance: 0},
+  {Minor: 7, Major: 0, Lat: 42.25322095, Long: -85.6414049, KontaktID: "sK5Q", Floor: 2, Distance: 0},
+  {Minor: 8, Major: 0, Lat: 42.25328619, Long: -85.64136063, KontaktID: "7oXx", Floor: 2, Distance: 0},
+  {Minor: 9, Major: 0, Lat: 42.25335143, Long: -85.64131636, KontaktID: "Fma5", Floor: 2, Distance: 0},
+  {Minor: 10, Major: 0, Lat: 42.25341666, Long: -85.64127208, KontaktID: "vRWR", Floor: 2, Distance: 0},
+  {Minor: 11, Major: 0, Lat: 42.2534819, Long: -85.64122781, KontaktID: "GEWh", Floor: 2, Distance: 0},
+  {Minor: 12, Major: 0, Lat: 42.25354714, Long: -85.64118353, KontaktID: "0dms", Floor: 2, Distance: 0},
 ];
 // #endregion
-
+var TestMarker = Marker.coordinate = {
+  latitude: 42.252836, //May need to be BeaconToReturn["Lat"]
+  longitude: -85.641453, //May need to be BeaconToReturn["Long"]
+};
 // #region flow types
 type DetectedBeacon = {
   identifier: string,
@@ -95,7 +98,6 @@ class reactNativeBeaconExample extends Component<Props, State> {
   }
   // will be set as list of beacons to update state
   _beaconsLists = null;
-
   // will be set as a reference to "beaconsDidRange" event:
   beaconsDidRangeEvent = null;
   // will be set as a reference to "regionDidEnter" event:
@@ -109,17 +111,13 @@ class reactNativeBeaconExample extends Component<Props, State> {
     // region information
     uuid: UUID,
     identifier: IDENTIFIER,
-
     // check bluetooth state:
     bluetoothState: '',
-
     message: '',
-
     beaconsLists: new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2,
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     }).cloneWithRowsAndSections(EMPTY_BEACONS_LISTS),
-
     beaconsArr: [],
     polyLinePath: []
   };
@@ -180,20 +178,6 @@ class reactNativeBeaconExample extends Component<Props, State> {
         });
       },
     );
-
-    // // Ranging: Listen for beacon changes
-    // this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
-    //   'beaconsDidRange',
-    //   ({region: {identifier, uuid}, beacons}) => {
-    //     // do here anything you need (ex: setting state...)
-    //     const Beacons = this.updateBeaconList(beacons);
-    //     //this.state.beaconsArr = Beacons['rangingList']; //This will pass just the list itself without the rangingList tag
-    //     minorVal = Beacons['rangingList'][0].minor;
-    //     console.log('beaconsDidRange these beacons: ', Beacons['rangingList']);
-    //     //To Reference Beacons:
-    //     //Beacons['rangingList'][index].variableNeeded
-    //   }
-    // );
 
     // Ranging: Listen for beacon changes
     this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
@@ -381,62 +365,49 @@ class reactNativeBeaconExample extends Component<Props, State> {
       <View style={styles.container}>
         <MapView
           provider={PROVIDER_GOOGLE}
-          mapType={this.mapType}
+          mapType="satellite"
           style={styles.map}
           initialRegion={this.mapState.region}
         >
-          <UrlTile
-            urlTemplate="file:///./assests/MapFiles/{z}/{x}/{y}.png"
-            zIndex={-1}
-          />
-          <Marker
-            /*title={marker.key}
-            image={flagPinkImg}
-            key={marker.key}*/
-            coordinate = {this.setMarkerToPosition()}
-          />
-          <Polyline
-        		coordinates= {this.state.polyLinePath}
-        		strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-        		strokeWidth={6}
-	      />
+        <Marker
+          //title={marker.key}
+          image={{ uri: "http://35.203.4.40/locationArt.png"}}
+          //key={marker.key}
+          coordinate={this.setMarkerToPosition()}
+        />
+        <Polyline
+          coordinates= {this.state.polyLinePath}
+          strokeColor="#B1B4BD" // fallback for when `strokeColors` is not supported by the map-provider
+          strokeWidth={9}
+          zIndex={1}
+        />
+        <UrlTile
+          urlTemplate="http://35.203.4.40/{z}/{x}/{y}.png"
+          zIndex={-1}
+        />
         </MapView>
+        <View style={styles.buttonContainerBR}>
+            <TouchableOpacity
+                onPress={() => this.floor()}
+                style={styles.button}
+                >
+                <Text>floor</Text>
+            </TouchableOpacity>
+        </View>
+
+         <View style={styles.buttonContainerTL}>
+             <TouchableOpacity
+                 onPress={() => this.menu()}
+                 >
+                <Image
+                  style={styles.button2}
+                  source={require('./menu.png')}
+                />
+             </TouchableOpacity>
+         </View>
       </View>
     );
   }
-
-  renderBeaconRow = rowData => (
-    <View style={styles.row}>
-      <Text style={styles.smallText}>
-        Identifier: {rowData.identifier ? rowData.identifier : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        UUID: {rowData.uuid ? rowData.uuid : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        Major: {rowData.major ? rowData.major : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        Minor: {rowData.minor ? rowData.minor : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        time: {rowData.time ? rowData.time : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        RSSI: {rowData.rssi ? rowData.rssi : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        Proximity: {rowData.proximity ? rowData.proximity : 'NA'}
-      </Text>
-      <Text style={styles.smallText}>
-        Distance: {rowData.accuracy ? rowData.accuracy.toFixed(2) : 'NA'}m
-      </Text>
-    </View>
-  );
-
-  renderBeaconSectionHeader = (sectionData, header) => (
-    <Text style={styles.rowSection}>{header}</Text>
-  );
 
   updateBeaconList = (detectedBeacons = [], listName = '') => {
     // just a deep copy of "this._beaconsLists":
@@ -532,6 +503,32 @@ const styles = StyleSheet.create({
   latlng: {
     width: 200,
     alignItems: 'stretch',
+  },
+  button: {
+      paddingHorizontal: 18,
+      paddingVertical: 12,
+      borderRadius: 20,
+      backgroundColor: 'rgba(0,125,255,0.7)',
+  },
+  button2: {
+      paddingHorizontal: 18,
+      paddingVertical: 12,
+      borderRadius: 20,
+      backgroundColor: 'rgba(140,140,140,0.7)',
+      width: 50,
+      height: 50,
+  },
+  buttonContainerBR: {
+      flex:1,
+      position: 'absolute',
+      right: 22,
+      bottom: 12,
+  },
+  buttonContainerTL: {
+      flex:1,
+      position: 'absolute',
+      left: 22,
+      top: 44,
   },
 });
 
