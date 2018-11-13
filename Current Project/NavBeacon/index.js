@@ -371,7 +371,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         >
         <Marker
           //title={marker.key}
-          image={{ uri: "http://35.203.4.40/locationArt.png"}}
+          image={{ uri: "http://35.203.88.246/locationArt.png"}}
           //key={marker.key}
           coordinate={this.setMarkerToPosition()}
         />
@@ -382,7 +382,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
           zIndex={1}
         />
         <UrlTile
-          urlTemplate="http://35.203.4.40/{z}/{x}/{y}.png"
+          urlTemplate="http://35.203.88.246/{z}/{x}/{y}.png"
           zIndex={-1}
         />
         </MapView>

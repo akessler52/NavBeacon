@@ -1,0 +1,19 @@
+React-Native:
+  Created by Facebook
+  Version .57
+
+Beacon Library Used:
+  https://github.com/MacKentoch/react-native-beacons-manager
+
+  IMPORTANT Changes (This is in all example Files):
+    // before 1.0.8 (or until 1.0.7):
+    DeviceEventEmitter.addListener()
+    // simply becomes (for both iOS and Android)
+    Beacons.BeaconsEventEmitter.addListener()
+
+React-Native-Maps:
+  Created by AirBnB
+  https://github.com/react-community/react-native-maps
+
+User Interface:
+
