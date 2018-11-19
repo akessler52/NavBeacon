@@ -337,23 +337,38 @@ class reactNativeBeaconExample extends Component<Props, State> {
 
   };
 
-  createPath(endPoint) {
-    let userPathArr = [];
+  createPath() {
+    let roomCoords = [];
+    let i = 0;
+    let flag = 0;
     console.log("Inside Create Path");
-    startPoint = {latitude: 42.25354714, longitude: -85.64118353};
-    //endPoint = {latitude: 42.25314516, longitude: -85.64145634}
-    //Empty Point Check
-    if(startPoint === undefined || endPoint === undefined)
+    startPoint = {latitude: this.state.usersLocation.newLat, longitude: this.state.usersLocation.newLong};
+    if(startPoint === undefined)
     {
-      userPathArr = null; //When passing a null to PolyLine it will not place a line nor break anything
+      roomCoords = []; //When passing a null to PolyLine it will not place a line nor break anything
     }
     else
     {
-      userPathArr.push(startPoint);
-      userPathArr.push(endPoint);
+      //Empty Point Check
+      while(i < roomArray["markers"].length && flag != 1)
+      {
+        //console.log("Room Array Title",roomArray["markers"][i].title,this.state.inputText);
+        if(roomArray["markers"][i].title == this.state.inputText)
+        {
+          roomCoords[0] = startPoint;
+          roomCoords[1] = roomArray["markers"][i].coordinates;
+          flag = 1
+        }
+        i++;
+      }
+
+      if(flag == 0)
+      {
+          roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}];
+      }
     }
-      //console.log("User Path Array",userPathArr);
-    return userPathArr;
+      //console.log("Room Coords",roomCoords);
+      this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
   }
 
   searchForRoom() {
@@ -369,20 +384,61 @@ class reactNativeBeaconExample extends Component<Props, State> {
       //console.log("Room Array Title",roomArray["markers"][i].title,this.state.inputText);
       if(roomArray["markers"][i].title == this.state.inputText)
       {
-        roomCoords[0] = startPoint;
-        roomCoords[1] = roomArray["markers"][i].coordinates;
+        Alert.alert(
+          'Navigate to '+this.state.inputText+'?',
+          'Are you sure?',
+        [
+          {text: 'Yes', onPress: () => this.createPath()},
+          {text: 'No', onPress: () => console.log('No Pressed')},
+        ])
         flag = 1
-      }
-      else
-      {
-        roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}];
       }
       i++;
     }
 
+    if(flag == 0) //No Room was found Alert the user
+    {
+      if(!this.state.inputText == "")
+      {
+        Alert.alert(
+          this.state.inputText+'not found',
+          'Try Again',
+        [
+          {text: 'Ok', onPress: () => console.log('Ok Pressed')},
+        ])
+      }
+    }
     //console.log("Room Coords",roomCoords);
-    this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
+    //this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
   }
+
+  // searchForRoom() {
+  //   let roomCoords = [];
+  //   let i = 0;
+  //   let flag = 0;
+  //   //console.log("Input Text",this.state.inputText);
+  //   //console.log("Room Array",roomArray["markers"][0].title);
+  //   newPoint = this.calculateNewCoordinate();
+  //   startPoint = {latitude: newPoint.newLat, longitude: newPoint.newLong};
+  //   while(i < roomArray["markers"].length && flag != 1)
+  //   {
+  //     //console.log("Room Array Title",roomArray["markers"][i].title,this.state.inputText);
+  //     if(roomArray["markers"][i].title == this.state.inputText)
+  //     {
+  //       roomCoords[0] = startPoint;
+  //       roomCoords[1] = roomArray["markers"][i].coordinates;
+  //       flag = 1
+  //     }
+  //     else
+  //     {
+  //       roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}];
+  //     }
+  //     i++;
+  //   }
+  //
+  //   //console.log("Room Coords",roomCoords);
+  //   this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
+  // }
 
   onChangeInputText(inputText) {
     this.setState({inputText: inputText});
@@ -397,6 +453,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
     }
     console.log(this.state.inputText);
   }
+
 //Pasting this beneath the Marker in Render will allow you to print ALL markers for each room on the path
     // {roomArray.markers.map((marker,index) => (
     //   <MapView.Marker
@@ -405,8 +462,6 @@ class reactNativeBeaconExample extends Component<Props, State> {
     //   title={marker.title}
     //   />
     // ))}
-//coordinates= {this.state.polyLinePath}
-
 
   render() {
     const { bluetoothState, beaconsLists, message} = this.state;
@@ -427,8 +482,8 @@ class reactNativeBeaconExample extends Component<Props, State> {
           style={styles.map}
           region={{latitude: latitude,
                     longitude: longitude,
-                    longitudeDelta: 0.0007,
-                    latitudeDelta: 0.0003}}
+                    longitudeDelta: longitudeDelta,
+                    latitudeDelta: latitudeDelta,}}
         >
         <Marker
           //title={marker.key}
