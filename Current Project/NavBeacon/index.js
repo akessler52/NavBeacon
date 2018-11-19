@@ -3,6 +3,7 @@
 // #region imports
 import React, { Component } from 'react';
 import { AppRegistry, StyleSheet, View, Text, ListView, DeviceEventEmitter, Dimensions, Image, TouchableOpacity, Alert } from 'react-native';
+import { SearchBar, List, ListItem } from 'react-native-elements';
 import Beacons from 'react-native-beacons-manager';
 import BluetoothState from 'react-native-bluetooth-state';
 import moment from 'moment';
@@ -16,7 +17,7 @@ const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE = 42.254254;
 const LONGITUDE = -85.640700;
-const LATITUDE_DELTA = 0.0052;
+const LATITUDE_DELTA = 0.00023;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 //List Of Beacons With Corresponding Latitude/Longitude and floor number
@@ -34,10 +35,30 @@ var BeaconsLocList = [
   {Minor: 11, Major: 0, Lat: 42.2534819, Long: -85.64122781, KontaktID: "GEWh", Floor: 2, Distance: 0},
   {Minor: 12, Major: 0, Lat: 42.25354714, Long: -85.64118353, KontaktID: "0dms", Floor: 2, Distance: 0},
 ];
+
+var roomArray = {
+  "markers": [
+  { "title": "C262", coordinates: { latitude: 42.25344401,longitude: -85.64125353},},
+  { "title": "B217", coordinates: { latitude: 42.25336261, longitude: -85.64130877},},
+  { "title": "B216", coordinates: { latitude: 42.25332347, longitude: -85.64133533},},
+  { "title": "B215", coordinates: { latitude: 42.25326321, longitude: -85.64137623},},
+  { "title": "B238", coordinates: { latitude: 42.25321537, longitude: -85.64140869},},
+  { "title": "B237", coordinates: { latitude: 42.2531756, longitude: -85.64143568},},
+  { "title": "B214", coordinates: { latitude: 42.25320418, longitude: -85.64141628},},
+  { "title": "B236", coordinates: { latitude: 42.25309048, longitude: -85.64149345},},
+  { "title": "B232", coordinates: { latitude: 42.25305134, longitude: -85.64152001},},
+  { "title": "B213", coordinates: { latitude: 42.25314516, longitude: -85.64145634},},
+  { "title": "B211", coordinates: { latitude: 42.25303518, longitude: -85.64153098},},
+  { "title": "B210", coordinates: { latitude: 42.25296497, longitude: -85.64157863},},
+  { "title": "B202", coordinates: { latitude: 42.25285589, longitude: -85.6415303},},
+  ]
+  }
+
+
 // #endregion
 var TestMarker = Marker.coordinate = {
-  latitude: 42.252836, //May need to be BeaconToReturn["Lat"]
-  longitude: -85.641453, //May need to be BeaconToReturn["Long"]
+  latitude: 42.25344401, //May need to be BeaconToReturn["Lat"]
+  longitude: -85.64125353, //May need to be BeaconToReturn["Long"]
 };
 // #region flow types
 type DetectedBeacon = {
@@ -114,12 +135,11 @@ class reactNativeBeaconExample extends Component<Props, State> {
     // check bluetooth state:
     bluetoothState: '',
     message: '',
-    beaconsLists: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-    }).cloneWithRowsAndSections(EMPTY_BEACONS_LISTS),
     beaconsArr: [],
-    polyLinePath: []
+    polyLinePath: [],
+    inputText: "",
+    userPath: [],
+    usersLocation: [],
   };
 
   componentWillMount() {
@@ -171,71 +191,14 @@ class reactNativeBeaconExample extends Component<Props, State> {
           'rangingList',
         );
         this._beaconsLists = updatedBeaconsLists;
+        //console.log("Updated beacons lists",updatedBeaconsLists);
         this.setState({
-          beaconsLists: this.state.beaconsLists.cloneWithRowsAndSections(
-            this._beaconsLists,
-          ),
+          beaconsArr: updatedBeaconsLists['rangingList'],
+          usersLocation: this.calculateNewCoordinate()
         });
       },
     );
 
-    // Ranging: Listen for beacon changes
-    this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
-      'beaconsDidRange',
-      ({region: {identifier, uuid}, beacons}) => {
-        const Beacons = this.updateBeaconList(beacons);
-        this.setState({ beaconsArr: Beacons['rangingList'] });
-        //this.state.beaconsArr = Beacons['rangingList'];
-        // do here anything you need (ex: setting state...)
-        //console.log('beaconsDidRange these beacons: ', this.state.beaconsArr);
-        //To Reference Beacons:
-        //Beacons['rangingList'][index].variableNeeded
-      }
-    );
-
-    // monitoring events
-    this.regionDidEnterEvent = DeviceEventEmitter.addListener(
-      'regionDidEnter',
-      ({ uuid, identifier }) => {
-        this.setState({ message: 'regionDidEnter event' });
-        //console.log('regionDidEnter, data: ', { uuid, identifier });
-        const time = moment().format(TIME_FORMAT);
-        const updatedBeaconsLists = this.updateBeaconList(
-          { uuid, identifier, time },
-          'monitorEnterList',
-        );
-        this._beaconsLists = updatedBeaconsLists;
-        this.setState({
-          beaconsLists: this.state.beaconsLists.cloneWithRowsAndSections(
-            this._beaconsLists,
-          ),
-        });
-      },
-    );
-
-    this.regionDidExitEvent = DeviceEventEmitter.addListener(
-      'regionDidExit',
-      ({ identifier, uuid, minor, major }) => {
-        this.setState({ message: 'regionDidExit event' });
-        /*console.log('regionDidExit, data: ', {
-          identifier,
-          uuid,
-          minor,
-          major,
-        });*/
-        const time = moment().format(TIME_FORMAT);
-        const updatedBeaconsLists = this.updateBeaconList(
-          { identifier, uuid, minor, major, time },
-          'monitorExitList',
-        );
-        this._beaconsLists = updatedBeaconsLists;
-        this.setState({
-          beaconsLists: this.state.beaconsLists.cloneWithRowsAndSections(
-            this._beaconsLists,
-          ),
-        });
-      },
-    );
     // listen bluetooth state change event
     BluetoothState.subscribe(bluetoothState =>
       this.setState({ bluetoothState: bluetoothState }),
@@ -273,22 +236,54 @@ class reactNativeBeaconExample extends Component<Props, State> {
     this.beaconsDidRangeEvent.remove();
   }
 
+  calculateNewCoordinate()
+  {
+    //Builds the Beacon to return array with the two closest beacons
+    let closeBeacons = [];
+    closeBeacons = this.findBeaconsClosest();
+
+    if(closeBeacons.length == 0)
+    {
+      return 0; //Return 0 this will need to be catched by set marker position
+    }
+    else
+    {
+      //Set the variables
+      let distA = closeBeacons[0].Distance;
+      let distB = closeBeacons[1].Distance;
+      //Do Math to get the coordinate in between
+      let distC = distA/(distA+distB);
+      distC = distC.toFixed(1);
+      //console.log("distC: ",distC);
+      let latA = closeBeacons[0].Lat;
+      let latB = closeBeacons[1].Lat;
+      let longA = closeBeacons[0].Long;
+      let longB = closeBeacons[1].Long;
+      let newLat = latA + (latB - latA) * distC;
+      let newLong = longA + (longB - longA) * distC;
+      // console.log("New Lat and Long",newLat,newLong);
+      // console.log("New Lat and Long Types",typeof newLat,typeof newLong,isNaN(newLat),isNaN(newLong));
+      let newCoordinate = {newLat,newLong};
+      //console.log("Calculated New Lat",newCoordinate);
+      return newCoordinate;
+    }
+
+  }
 //Searches through the beacons list and returns the Beacon Object with Lat and Long
   setMarkerToPosition() {
 
-    var BeaconToReturn = [];
-    BeaconToReturn = this.findBeaconsClosest();
-
-    if(BeaconToReturn.length == 0)
+    var newCoordinate = [];
+    //newCoordinate = this.calculateNewCoordinate();
+    newCoordinate = this.state.usersLocation;
+    if(newCoordinate == 0)
     {
       var NewMarker = Marker.coordinate = null;
     }
     else {
-      //console.log("ELSE: ", BeaconArray[0]);
-      //BeaconToReturn = this.findBeaconsClosest();
+
       var NewMarker = Marker.coordinate = {
-        latitude: BeaconToReturn[0].Lat, //May need to be BeaconToReturn["Lat"]
-        longitude: BeaconToReturn[0].Long, //May need to be BeaconToReturn["Long"]
+        latitude: newCoordinate.newLat, //newCoordinate Latitude at Index 0
+        longitude: newCoordinate.newLong, //newCoordinate Longitude at Index 1
       };
     }
     /* For Reference LatLong is a Marker Type
@@ -304,17 +299,18 @@ class reactNativeBeaconExample extends Component<Props, State> {
   findBeaconsClosest() {
     var i=0;
     var BeaconToReturn = [];
-
+    //console.log("BeaconsArr",this.state.beaconsArr);
     if(this.state.beaconsArr === undefined || this.state.beaconsArr.length == 0)
     {//If the Array is undefined or length is 0 return NULL handle this in the coordinate marker call
       BeaconToReturn = [];
+      //console.log("CAUGHT EMPTY LIST");
     }
     else
     {
       do{
           BeaconToReturn[0] = BeaconsLocList[this.state.beaconsArr[i].minor-1];
           BeaconToReturn[0].Distance = this.state.beaconsArr[i].accuracy;
-          console.log("Beacon Array position",i);
+          //console.log("Beacon Array position",i);
           if(i < this.state.beaconsArr.length-1)
           {
             BeaconToReturn[1] = BeaconsLocList[this.state.beaconsArr[i+1].minor-1];
@@ -322,7 +318,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
           }
 
       }while(this.state.beaconsArr[i++].accuracy < 0 && i < this.state.beaconsArr.length-1);
-      console.log("BeaconToReturn", BeaconToReturn);
+      //console.log("BeaconToReturn", BeaconToReturn);
     }
 
     return BeaconToReturn;
@@ -341,37 +337,102 @@ class reactNativeBeaconExample extends Component<Props, State> {
 
   };
 
-  createPath() {
-    var userPathArr = [];
-
-    var BeaconToReturn1 = this.findBeaconsClosest();
-    //BeaconToReturn2 = this.findBeaconsClosest();
-    if(BeaconToReturn1.length == 0)
+  createPath(endPoint) {
+    let userPathArr = [];
+    console.log("Inside Create Path");
+    startPoint = {latitude: 42.25354714, longitude: -85.64118353};
+    //endPoint = {latitude: 42.25314516, longitude: -85.64145634}
+    //Empty Point Check
+    if(startPoint === undefined || endPoint === undefined)
     {
-      userPathArr = [];
+      userPathArr = null; //When passing a null to PolyLine it will not place a line nor break anything
     }
     else
     {
-      userPathArr = this.state.polyLinePath.slice([BeaconToReturn1[0].Minor-1],this.state.polyLinePath.length);
+      userPathArr.push(startPoint);
+      userPathArr.push(endPoint);
     }
-
+      //console.log("User Path Array",userPathArr);
     return userPathArr;
   }
+
+  searchForRoom() {
+    let roomCoords = [];
+    let i = 0;
+    let flag = 0;
+    //console.log("Input Text",this.state.inputText);
+    //console.log("Room Array",roomArray["markers"][0].title);
+    newPoint = this.calculateNewCoordinate();
+    startPoint = {latitude: newPoint.newLat, longitude: newPoint.newLong};
+    while(i < roomArray["markers"].length && flag != 1)
+    {
+      //console.log("Room Array Title",roomArray["markers"][i].title,this.state.inputText);
+      if(roomArray["markers"][i].title == this.state.inputText)
+      {
+        roomCoords[0] = startPoint;
+        roomCoords[1] = roomArray["markers"][i].coordinates;
+        flag = 1
+      }
+      else
+      {
+        roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}];
+      }
+      i++;
+    }
+
+    //console.log("Room Coords",roomCoords);
+    this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
+  }
+
+  onChangeInputText(inputText) {
+    this.setState({inputText: inputText});
+    //this.setState({usersLocation: this.calculateNewCoordinate()});
+
+    if(inputText == "")
+    {
+      let roomCoords = [] //Create Blank array of coordinates
+      roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}]; //Set Poly Line to 0,0 (YES THIS IS HACK)
+      this.setState({userPath: roomCoords}); //State sets suuper slow
+      //console.log("inputText is empty: ",this.state.userPath);
+    }
+    console.log(this.state.inputText);
+  }
+//Pasting this beneath the Marker in Render will allow you to print ALL markers for each room on the path
+    // {roomArray.markers.map((marker,index) => (
+    //   <MapView.Marker
+    //   key = {index}
+    //   coordinate={marker.coordinates}
+    //   title={marker.title}
+    //   />
+    // ))}
+//coordinates= {this.state.polyLinePath}
+
 
   render() {
     const { bluetoothState, beaconsLists, message} = this.state;
     this.createPathArray();
+    let latitude = 42.254254;
+    let longitude = -85.640700;
+    let longitudeDelta = LONGITUDE_DELTA;
+    let latitudeDelta = LATITUDE_DELTA;
+    if(this.state.usersLocation){
+      latitude = this.state.usersLocation.newLat;
+      longitude = this.state.usersLocation.newLong;
+    }
     return (
       <View style={styles.container}>
         <MapView
           provider={PROVIDER_GOOGLE}
           mapType="satellite"
           style={styles.map}
-          initialRegion={this.mapState.region}
+          region={{latitude: latitude,
+                    longitude: longitude,
+                    longitudeDelta: 0.0007,
+                    latitudeDelta: 0.0003}}
         >
         <Marker
           //title={marker.key}
-          image={{ uri: "http://35.203.88.246/locationArt.png"}}
+          image={{ uri: "http://35.203.122.82/locationArt.png"}}
           //key={marker.key}
           coordinate={this.setMarkerToPosition()}
         />
@@ -381,30 +442,39 @@ class reactNativeBeaconExample extends Component<Props, State> {
           strokeWidth={9}
           zIndex={1}
         />
+        <Polyline
+          coordinates= {this.state.userPath}
+          strokeColor="#3B68F0" // fallback for when `strokeColors` is not supported by the map-provider
+          strokeWidth={10}
+          zIndex={1}
+        />
         <UrlTile
-          urlTemplate="http://35.203.88.246/{z}/{x}/{y}.png"
+          urlTemplate="http://35.203.122.82/{z}/{x}/{y}.png"
           zIndex={-1}
         />
         </MapView>
+        <View style={styles.search}>
+           <SearchBar
+               round
+               lightTheme
+               containerStyle={styles.searchBox}
+               inputContainerStyle={styles.searchInputBox}
+               placeholder='Search'
+               inputStyle = {styles.inputstyles}
+               clearIcon
+               onChangeText={(inputText) => this.onChangeInputText(inputText)}
+               onEndEditing={() => this.searchForRoom()}
+               onClear={(inputText) => this.onChangeInputText(inputText)}
+               onCancel={(inputText) => this.onChangeInputText(inputText)} />
+        </View>
         <View style={styles.buttonContainerBR}>
             <TouchableOpacity
-                onPress={() => this.floor()}
+                onPress={this.floor}
                 style={styles.button}
                 >
                 <Text>floor</Text>
             </TouchableOpacity>
         </View>
-
-         <View style={styles.buttonContainerTL}>
-             <TouchableOpacity
-                 onPress={() => this.menu()}
-                 >
-                <Image
-                  style={styles.button2}
-                  source={require('./menu.png')}
-                />
-             </TouchableOpacity>
-         </View>
       </View>
     );
   }
@@ -530,6 +600,20 @@ const styles = StyleSheet.create({
       left: 22,
       top: 44,
   },
+  search: {
+   position: 'absolute',
+   left: 16,
+   right: 16,
+   top: 32,
+ },
+ searchBox: {
+  backgroundColor: 'transparent',
+  borderTopWidth: 0,
+  borderBottomWidth: 0,
+ },
+ inputstyles: {
+   color: 'black',
+ },
 });
 
 AppRegistry.registerComponent('reactNativeBeaconExample',() => reactNativeBeaconExample);
