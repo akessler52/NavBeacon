@@ -12,7 +12,7 @@ import { hashCode, deepCopyBeaconsLists } from './helpers';
 //New MapTiles Import
 import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile, Marker,Polyline } from 'react-native-maps';
 const { width, height } = Dimensions.get('window');
-//import positionMarker from './position.png'
+import positionMarker from './locationArt.png'
 //MapTiles Lat and Long
 const ASPECT_RATIO = width / height;
 const LATITUDE = 42.254254;
@@ -140,6 +140,13 @@ class reactNativeBeaconExample extends Component<Props, State> {
     inputText: "",
     userPath: [],
     usersLocation: [],
+    endLocation: null,
+    region: {
+      latitude: LATITUDE,
+      longitude: LONGITUDE,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA,
+    },
   };
 
   componentWillMount() {
@@ -324,7 +331,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
     return BeaconToReturn;
   }
 
-  createPathArray() {
+  createPathArray() { //This creates the hallway path (Gray Poly Line)
     var i;
     var coordinate = new Object();
 
@@ -334,7 +341,6 @@ class reactNativeBeaconExample extends Component<Props, State> {
       //console.log("Coordinate Object: ",coordinate);
       this.state.polyLinePath.push(coordinate);
     }
-
   };
 
   createPath() {
@@ -357,6 +363,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         {
           roomCoords[0] = startPoint;
           roomCoords[1] = roomArray["markers"][i].coordinates;
+          this.setState({endLocation: roomCoords[1]});
           flag = 1
         }
         i++;
@@ -369,7 +376,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
     }
       //console.log("Room Coords",roomCoords);
       this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
-  }
+  };
 
   searchForRoom() {
     let roomCoords = [];
@@ -408,37 +415,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         ])
       }
     }
-    //console.log("Room Coords",roomCoords);
-    //this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
-  }
-
-  // searchForRoom() {
-  //   let roomCoords = [];
-  //   let i = 0;
-  //   let flag = 0;
-  //   //console.log("Input Text",this.state.inputText);
-  //   //console.log("Room Array",roomArray["markers"][0].title);
-  //   newPoint = this.calculateNewCoordinate();
-  //   startPoint = {latitude: newPoint.newLat, longitude: newPoint.newLong};
-  //   while(i < roomArray["markers"].length && flag != 1)
-  //   {
-  //     //console.log("Room Array Title",roomArray["markers"][i].title,this.state.inputText);
-  //     if(roomArray["markers"][i].title == this.state.inputText)
-  //     {
-  //       roomCoords[0] = startPoint;
-  //       roomCoords[1] = roomArray["markers"][i].coordinates;
-  //       flag = 1
-  //     }
-  //     else
-  //     {
-  //       roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}];
-  //     }
-  //     i++;
-  //   }
-  //
-  //   //console.log("Room Coords",roomCoords);
-  //   this.setState({userPath: roomCoords}); //Don't rely on this to be done in time
-  // }
+  };
 
   onChangeInputText(inputText) {
     this.setState({inputText: inputText});
@@ -449,19 +426,35 @@ class reactNativeBeaconExample extends Component<Props, State> {
       let roomCoords = [] //Create Blank array of coordinates
       roomCoords = [{ latitude: 0,longitude: 0},{ latitude: 0,longitude: 0}]; //Set Poly Line to 0,0 (YES THIS IS HACK)
       this.setState({userPath: roomCoords}); //State sets suuper slow
+      this.setState({endLocation: null})
       //console.log("inputText is empty: ",this.state.userPath);
     }
     console.log(this.state.inputText);
+  };
+
+  centerOnUser() {
+
+    //this.setState({region: })
+    this.mapState.region.latitude = this.state.usersLocation.newLat;
+    this.mapState.region.longitude = this.state.usersLocation.newLong;
+    this.mapState.region.longitudeDelta = .00023;
   }
 
-//Pasting this beneath the Marker in Render will allow you to print ALL markers for each room on the path
-    // {roomArray.markers.map((marker,index) => (
-    //   <MapView.Marker
-    //   key = {index}
-    //   coordinate={marker.coordinates}
-    //   title={marker.title}
-    //   />
-    // ))}
+  getInitialState() {
+    return {
+      region: {
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        longitudeDelta: LONGITUDE_DELTA,
+        latitudeDelta: LATITUDE_DELTA,
+      }
+    };
+  }
+
+  onRegionChange(region) {
+    console.log("Inside On Region Change",region);
+    this.setState({region});
+  }
 
   render() {
     const { bluetoothState, beaconsLists, message} = this.state;
@@ -470,9 +463,10 @@ class reactNativeBeaconExample extends Component<Props, State> {
     let longitude = -85.640700;
     let longitudeDelta = LONGITUDE_DELTA;
     let latitudeDelta = LATITUDE_DELTA;
-    if(this.state.usersLocation){
-      latitude = this.state.usersLocation.newLat;
-      longitude = this.state.usersLocation.newLong;
+    if(this.state.usersLocation)
+    {
+     latitude = this.state.usersLocation.newLat;
+     longitude = this.state.usersLocation.newLong;
     }
     return (
       <View style={styles.container}>
@@ -484,12 +478,15 @@ class reactNativeBeaconExample extends Component<Props, State> {
                     longitude: longitude,
                     longitudeDelta: longitudeDelta,
                     latitudeDelta: latitudeDelta,}}
+          onRegionChange={(region) => this.onRegionChange(region)}
         >
         <Marker
-          //title={marker.key}
-          image={{ uri: "http://35.203.122.82/locationArt.png"}}
+          image={positionMarker}
           //key={marker.key}
           coordinate={this.setMarkerToPosition()}
+        />
+        <Marker
+          coordinate={this.state.endLocation}
         />
         <Polyline
           coordinates= {this.state.polyLinePath}
@@ -524,10 +521,10 @@ class reactNativeBeaconExample extends Component<Props, State> {
         </View>
         <View style={styles.buttonContainerBR}>
             <TouchableOpacity
-                onPress={this.floor}
+                onPress={this.centerOnUser()}
                 style={styles.button}
                 >
-                <Text>floor</Text>
+                <Text>Center</Text>
             </TouchableOpacity>
         </View>
       </View>
