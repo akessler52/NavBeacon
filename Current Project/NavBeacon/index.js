@@ -54,7 +54,10 @@ var roomArray = {
   ]
   }
 
-
+var latitude = 42.254254;
+var longitude = -85.640700;
+var longitudeDelta = LONGITUDE_DELTA;
+var latitudeDelta = LATITUDE_DELTA;
 // #endregion
 var TestMarker = Marker.coordinate = {
   latitude: 42.25344401, //May need to be BeaconToReturn["Lat"]
@@ -147,6 +150,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
       latitudeDelta: LATITUDE_DELTA,
       longitudeDelta: LONGITUDE_DELTA,
     },
+    followUserFlag: 0,
   };
 
   componentWillMount() {
@@ -433,11 +437,13 @@ class reactNativeBeaconExample extends Component<Props, State> {
   };
 
   centerOnUser() {
-
-    //this.setState({region: })
-    this.mapState.region.latitude = this.state.usersLocation.newLat;
-    this.mapState.region.longitude = this.state.usersLocation.newLong;
-    this.mapState.region.longitudeDelta = .00023;
+    if(this.state.followUserFlag == 0)
+    {
+      this.state.followUserFlag = 1;
+    }
+    // this.mapState.region.latitude = this.state.usersLocation.newLat;
+    // this.mapState.region.longitude = this.state.usersLocation.newLong;
+    // this.mapState.region.longitudeDelta = .00023;
   }
 
   getInitialState() {
@@ -451,34 +457,50 @@ class reactNativeBeaconExample extends Component<Props, State> {
     };
   }
 
-  onRegionChange(region) {
-    console.log("Inside On Region Change",region);
-    this.setState({region});
+  onRegionChange(newRegion) {
+    if(this.state.followUserFlag == 1 && this.state.usersLocation)
+    {
+      this.state.followUserFlag = 0;
+      latitude = newRegion.latitude;
+      longitude = newRegion.longitude;
+      latitudeDelta = newRegion.latitudeDelta;
+      longitudeDelta = newRegion.longitudeDelta;
+    }
+    else if(this.state.followUserFlag == 0 && this.state.usersLocation)
+    {
+      latitude = newRegion.latitude;
+      longitude = newRegion.longitude;
+      latitudeDelta = newRegion.latitudeDelta;
+      longitudeDelta = newRegion.longitudeDelta;
+    }
   }
+
+//          onRegionChange={(newRegion) => this.onRegionChange(newRegion)}
 
   render() {
     const { bluetoothState, beaconsLists, message} = this.state;
     this.createPathArray();
-    let latitude = 42.254254;
-    let longitude = -85.640700;
-    let longitudeDelta = LONGITUDE_DELTA;
-    let latitudeDelta = LATITUDE_DELTA;
-    if(this.state.usersLocation)
+
+    if(this.state.followUserFlag == 1 && this.state.usersLocation)
     {
      latitude = this.state.usersLocation.newLat;
      longitude = this.state.usersLocation.newLong;
+     latitudeDelta = LATITUDE_DELTA;
+     longitudeDelta = LONGITUDE_DELTA;
     }
     return (
       <View style={styles.container}>
+      {console.log("followUserFlag: ",this.state.followUserFlag)}
         <MapView
           provider={PROVIDER_GOOGLE}
           mapType="satellite"
           style={styles.map}
-          region={{latitude: latitude,
-                    longitude: longitude,
-                    longitudeDelta: longitudeDelta,
-                    latitudeDelta: latitudeDelta,}}
-          onRegionChange={(region) => this.onRegionChange(region)}
+          region={{
+          latitude: latitude,
+          longitude: longitude,
+          longitudeDelta: longitudeDelta,
+          latitudeDelta: latitudeDelta,}}
+          onRegionChange={(newRegion) => this.onRegionChange(newRegion)}
         >
         <Marker
           image={positionMarker}
@@ -521,7 +543,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         </View>
         <View style={styles.buttonContainerBR}>
             <TouchableOpacity
-                onPress={this.centerOnUser()}
+                onPress={() => this.centerOnUser()}
                 style={styles.button}
                 >
                 <Text>Center</Text>
