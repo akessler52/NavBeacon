@@ -1,19 +1,20 @@
 // @flow
 
-// #region imports
+//Standard Imports for Application in React-Native
 import React, { Component } from 'react';
 import { AppRegistry, StyleSheet, View, Text, ListView, DeviceEventEmitter, Dimensions, Image, TouchableOpacity, Alert } from 'react-native';
 import { SearchBar, List, ListItem } from 'react-native-elements';
+//Bluetooth Beacon Package Imports
 import Beacons from 'react-native-beacons-manager';
 import BluetoothState from 'react-native-bluetooth-state';
 import moment from 'moment';
 import { hashCode, deepCopyBeaconsLists } from './helpers';
-
 //New MapTiles Import
 import MapView, { MAP_TYPES, PROVIDER_GOOGLE, ProviderPropType, UrlTile, Marker,Polyline } from 'react-native-maps';
 const { width, height } = Dimensions.get('window');
 import positionMarker from './locationArt.png'
-//MapTiles Lat and Long
+import centerOnUserMarker from './centerOnUserMarker.png';
+//React-Native Maps Lat and Long
 const ASPECT_RATIO = width / height;
 const LATITUDE = 42.254254;
 const LONGITUDE = -85.640700;
@@ -54,15 +55,12 @@ var roomArray = {
   ]
   }
 
+//For the Center on User/Allow user to move around
 var latitude = 42.254254;
 var longitude = -85.640700;
 var longitudeDelta = LONGITUDE_DELTA;
 var latitudeDelta = LATITUDE_DELTA;
-// #endregion
-var TestMarker = Marker.coordinate = {
-  latitude: 42.25344401, //May need to be BeaconToReturn["Lat"]
-  longitude: -85.64125353, //May need to be BeaconToReturn["Long"]
-};
+
 // #region flow types
 type DetectedBeacon = {
   identifier: string,
@@ -103,55 +101,44 @@ const EMPTY_BEACONS_LISTS = {
   monitorExitList: [],
 };
 
-// #endregion
-
 class reactNativeBeaconExample extends Component<Props, State> {
   //Map Tiles Constructor
   constructor(props, context) {
     super(props, context);
+    // will be set as list of beacons to update state
+    this._beaconsLists = null;
+    // will be set as a reference to "beaconsDidRange" event:
+    this.beaconsDidRangeEvent = null;
+    // will be set as a reference to "regionDidEnter" event:
+    this.regionDidEnterEvent = null;
+    // will be set as a reference to "regionDidExit" event:
+    this.regionDidExitEvent = null;
+    // will be set as a reference to "authorizationStatusDidChange" event:
+    this.authStateDidRangeEvent = null;
 
-    this.mapState = {
+    this.state = {
+      // region information
+      uuid: UUID,
+      identifier: IDENTIFIER,
+      // check bluetooth state:
+      bluetoothState: '',
+      message: '',
+      beaconsArr: [],
+      polyLinePath: [],
+      inputText: "",
+      userPath: [],
+      usersLocation: [],
+      endLocation: null,
       region: {
         latitude: LATITUDE,
         longitude: LONGITUDE,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-        marker: null,
+      followUserFlag: 1,
+      showDirections: 0,
     };
   }
-  // will be set as list of beacons to update state
-  _beaconsLists = null;
-  // will be set as a reference to "beaconsDidRange" event:
-  beaconsDidRangeEvent = null;
-  // will be set as a reference to "regionDidEnter" event:
-  regionDidEnterEvent = null;
-  // will be set as a reference to "regionDidExit" event:
-  regionDidExitEvent = null;
-  // will be set as a reference to "authorizationStatusDidChange" event:
-  authStateDidRangeEvent = null;
-
-  state = {
-    // region information
-    uuid: UUID,
-    identifier: IDENTIFIER,
-    // check bluetooth state:
-    bluetoothState: '',
-    message: '',
-    beaconsArr: [],
-    polyLinePath: [],
-    inputText: "",
-    userPath: [],
-    usersLocation: [],
-    endLocation: null,
-    region: {
-      latitude: LATITUDE,
-      longitude: LONGITUDE,
-      latitudeDelta: LATITUDE_DELTA,
-      longitudeDelta: LONGITUDE_DELTA,
-    },
-    followUserFlag: 0,
-  };
 
   componentWillMount() {
     this._beaconsLists = EMPTY_BEACONS_LISTS;
@@ -195,7 +182,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
     this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
       'beaconsDidRange',
       data => {
-        this.setState({ message: 'beaconsDidRange event' });
+        //this.setState({ message: 'beaconsDidRange event' });
         // console.log('beaconsDidRange, data: ', data);
         const updatedBeaconsLists = this.updateBeaconList(
           data.beacons,
@@ -297,14 +284,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         longitude: newCoordinate.newLong, //newCoordinate Longitude at Index 1
       };
     }
-    /* For Reference LatLong is a Marker Type
-      type LatLng {
-      latitude:
-      longtiude:
-    }
-    */
     return NewMarker;
-
   };
 
   findBeaconsClosest() {
@@ -331,7 +311,6 @@ class reactNativeBeaconExample extends Component<Props, State> {
       }while(this.state.beaconsArr[i++].accuracy < 0 && i < this.state.beaconsArr.length-1);
       //console.log("BeaconToReturn", BeaconToReturn);
     }
-
     return BeaconToReturn;
   }
 
@@ -395,13 +374,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
       //console.log("Room Array Title",roomArray["markers"][i].title,this.state.inputText);
       if(roomArray["markers"][i].title == this.state.inputText)
       {
-        Alert.alert(
-          'Navigate to '+this.state.inputText+'?',
-          'Are you sure?',
-        [
-          {text: 'Yes', onPress: () => this.createPath()},
-          {text: 'No', onPress: () => console.log('No Pressed')},
-        ])
+        this.setState({showDirections: 1});
         flag = 1
       }
       i++;
@@ -412,7 +385,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
       if(!this.state.inputText == "")
       {
         Alert.alert(
-          this.state.inputText+'not found',
+          this.state.inputText+' not found',
           'Try Again',
         [
           {text: 'Ok', onPress: () => console.log('Ok Pressed')},
@@ -423,8 +396,6 @@ class reactNativeBeaconExample extends Component<Props, State> {
 
   onChangeInputText(inputText) {
     this.setState({inputText: inputText});
-    //this.setState({usersLocation: this.calculateNewCoordinate()});
-
     if(inputText == "")
     {
       let roomCoords = [] //Create Blank array of coordinates
@@ -441,24 +412,10 @@ class reactNativeBeaconExample extends Component<Props, State> {
     {
       this.state.followUserFlag = 1;
     }
-    // this.mapState.region.latitude = this.state.usersLocation.newLat;
-    // this.mapState.region.longitude = this.state.usersLocation.newLong;
-    // this.mapState.region.longitudeDelta = .00023;
-  }
-
-  getInitialState() {
-    return {
-      region: {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        longitudeDelta: LONGITUDE_DELTA,
-        latitudeDelta: LATITUDE_DELTA,
-      }
-    };
   }
 
   onRegionChange(newRegion) {
-    if(this.state.followUserFlag == 1 && this.state.usersLocation)
+    if(this.state.followUserFlag == 1 && this.state.usersLocation) //Follow User
     {
       this.state.followUserFlag = 0;
       latitude = newRegion.latitude;
@@ -466,7 +423,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
       latitudeDelta = newRegion.latitudeDelta;
       longitudeDelta = newRegion.longitudeDelta;
     }
-    else if(this.state.followUserFlag == 0 && this.state.usersLocation)
+    else if(this.state.followUserFlag == 0 && this.state.usersLocation) //Move Around Map
     {
       latitude = newRegion.latitude;
       longitude = newRegion.longitude;
@@ -475,7 +432,70 @@ class reactNativeBeaconExample extends Component<Props, State> {
     }
   }
 
-//          onRegionChange={(newRegion) => this.onRegionChange(newRegion)}
+  showCenterButton() {
+    if(this.state.followUserFlag == 0)
+    {
+      return (
+        <View style={styles.buttonContainerBR}>
+            <TouchableOpacity
+              onPress={() => this.centerOnUser()}
+              style={styles.button2}
+            >
+            <Image
+              style={styles.button}
+              source= {centerOnUserMarker}
+            />
+            </TouchableOpacity>
+        </View>
+    )
+  }
+  }
+
+  showStartDirections() {
+    if(this.state.showDirections == 1)
+    {
+      return (
+        <View style={styles.buttonContainerLeftCorner}>
+            <TouchableOpacity
+              onPress={() => this.pressStart()}
+              style={styles.start}
+            >
+            <Text style={styles.startCancelText}>Start</Text>
+        </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.pressCancel()}
+              style={styles.cancel}
+            >
+            <Text style={styles.startCancelText}>Cancel</Text>
+            </TouchableOpacity>
+        </View>
+      )
+    }
+    if(this.state.showDirections == 2)
+    {
+      return (
+        <View style={styles.buttonContainerLeftCorner}>
+            <TouchableOpacity
+              onPress={() => this.pressCancel()}
+              style={styles.cancel}
+            >
+            <Text style={styles.startCancelText}>Cancel</Text>
+            </TouchableOpacity>
+        </View>
+      )
+    }
+  }
+
+  pressStart() {
+    this.createPath();
+    this.setState({showDirections: 2});
+  }
+
+  pressCancel() {
+    this.state.inputText="";
+    this.setState({showDirections: 0,endLocation: null});
+    this.createPath();
+  }
 
   render() {
     const { bluetoothState, beaconsLists, message} = this.state;
@@ -505,6 +525,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         <Marker
           image={positionMarker}
           //key={marker.key}
+          tracksViewChanges = {false}
           coordinate={this.setMarkerToPosition()}
         />
         <Marker
@@ -529,6 +550,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         </MapView>
         <View style={styles.search}>
            <SearchBar
+               platform="ios"
                round
                lightTheme
                containerStyle={styles.searchBox}
@@ -539,16 +561,12 @@ class reactNativeBeaconExample extends Component<Props, State> {
                onChangeText={(inputText) => this.onChangeInputText(inputText)}
                onEndEditing={() => this.searchForRoom()}
                onClear={(inputText) => this.onChangeInputText(inputText)}
-               onCancel={(inputText) => this.onChangeInputText(inputText)} />
+               onCancel={(inputText) => this.onChangeInputText(inputText)}
+
+           />
         </View>
-        <View style={styles.buttonContainerBR}>
-            <TouchableOpacity
-                onPress={() => this.centerOnUser()}
-                style={styles.button}
-                >
-                <Text>Center</Text>
-            </TouchableOpacity>
-        </View>
+        {this.showCenterButton()}
+        {this.showStartDirections()}
       </View>
     );
   }
@@ -650,22 +668,50 @@ const styles = StyleSheet.create({
   },
   button: {
       paddingHorizontal: 18,
-      paddingVertical: 12,
-      borderRadius: 20,
-      backgroundColor: 'rgba(0,125,255,0.7)',
+      paddingVertical: 18,
+      borderRadius: 30,
+      backgroundColor: 'rgba(200,200,200,1)',
+      width: 30,
+      height: 30,
   },
   button2: {
-      paddingHorizontal: 18,
+      paddingHorizontal: 12,
       paddingVertical: 12,
-      borderRadius: 20,
-      backgroundColor: 'rgba(140,140,140,0.7)',
-      width: 50,
-      height: 50,
+      borderRadius: 40,
+      backgroundColor: 'rgba(200,200,200,1)',
+  },
+  start: {
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      borderRadius: 0,
+      backgroundColor: 'rgba(5,150,255,1)',
+      borderRadius: 0,
+      borderWidth: 2,
+      borderColor: 'rgba(0,0,0,1)',
+      alignItems: 'center',
+      width: 80,
+  },
+  cancel: {
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      borderRadius: 0,
+      backgroundColor: 'rgba(216,0,0,1)',
+      borderRadius: 0,
+      borderWidth: 2,
+      borderColor: 'rgba(0,0,0,1)',
+      alignItems: 'center',
+      width: 80,
   },
   buttonContainerBR: {
       flex:1,
       position: 'absolute',
       right: 22,
+      bottom: 12,
+  },
+  buttonContainerLeftCorner: {
+      flexDirection: 'row',
+      position: 'absolute',
+      left: 22,
       bottom: 12,
   },
   buttonContainerTL: {
@@ -688,6 +734,11 @@ const styles = StyleSheet.create({
  inputstyles: {
    color: 'black',
  },
+ startCancelText:
+ {
+   color: 'white',
+   fontWeight: 'bold',
+ }
 });
 
 AppRegistry.registerComponent('reactNativeBeaconExample',() => reactNativeBeaconExample);

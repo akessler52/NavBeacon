@@ -135,3 +135,49 @@
       title={marker.title}
     />
   ))}
+
+
+  // Alert.alert(
+  //   'Navigate to '+this.state.inputText+'?',
+  //   'Are you sure?',
+  // [
+  //   {text: 'Yes', onPress: () => this.createPath()},
+  //   {text: 'No', onPress: () => console.log('No Pressed')},
+  // ])
+
+  <MapView
+    provider={PROVIDER_GOOGLE}
+    mapType="satellite"
+    style={styles.map}
+    region={{
+    latitude: latitude,
+    longitude: longitude,
+    longitudeDelta: longitudeDelta,
+    latitudeDelta: latitudeDelta,}}
+    onRegionChange={(newRegion) => this.onRegionChange(newRegion)}
+  >
+  <Marker
+    image={positionMarker}
+    //key={marker.key}
+    coordinate={this.setMarkerToPosition()}
+  />
+  <Marker
+    coordinate={this.state.endLocation}
+  />
+  <Polyline
+    coordinates= {this.state.polyLinePath}
+    strokeColor="#B1B4BD" // fallback for when `strokeColors` is not supported by the map-provider
+    strokeWidth={9}
+    zIndex={1}
+  />
+  <Polyline
+    coordinates= {this.state.userPath}
+    strokeColor="#3B68F0" // fallback for when `strokeColors` is not supported by the map-provider
+    strokeWidth={10}
+    zIndex={1}
+  />
+  <UrlTile
+    urlTemplate="http://35.203.122.82/{z}/{x}/{y}.png"
+    zIndex={-1}
+  />
+  </MapView>
