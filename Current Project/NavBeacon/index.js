@@ -135,7 +135,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA,
       },
-      followUserFlag: 1,
+      followUserFlag: 0,
       showDirections: 0,
     };
   }
@@ -239,10 +239,12 @@ class reactNativeBeaconExample extends Component<Props, State> {
     //Builds the Beacon to return array with the two closest beacons
     let closeBeacons = [];
     closeBeacons = this.findBeaconsClosest();
-
-    if(closeBeacons.length == 0)
+    //console.log("Close Beacons Length: ",closeBeacons.length);
+    //console.log("Close Beacons List: ",closeBeacons);
+    if(closeBeacons.length == 0 && closeBeacons[1] === undefined)
     {
-      return 0; //Return 0 this will need to be catched by set marker position
+      //console.log("Inside User Location Undefined");
+      return this.state.usersLocation; //Return 0 this will need to be catched by set marker position
     }
     else
     {
@@ -267,7 +269,8 @@ class reactNativeBeaconExample extends Component<Props, State> {
     }
 
   }
-//Searches through the beacons list and returns the Beacon Object with Lat and Long
+
+  //Searches through the beacons list and returns the Beacon Object with Lat and Long
   setMarkerToPosition() {
 
     var newCoordinate = [];
