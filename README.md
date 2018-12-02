@@ -24,8 +24,11 @@ Google-Maps PolyLines to draw the path</br>
 Google-Maps Marker to show end location</br>
 
 <b>Future Release Ideas</b></br>
-<b>Acceleromter/Gyroscope:</b></br> To get a better idea which way a user is going</br>
-<b>Database Implementation:</b></br> Store the beacons - (Minor, Major, Latitude, Longitude, KontaktID, Floor) and Rooms - (Room Number, Latitude, Longitude)</br>
-<b>UI Changes:</b></br> Left Side Sliding Menu: Give the user access to Events, Restrooms, Food, Offices</br>
+<b>Acceleromter/Gyroscope:</b></br> 
+To get a better idea which way a user is going</br>
+<b>Database Implementation:</b></br> 
+Store the beacons - (Minor, Major, Latitude, Longitude, KontaktID, Floor) and Rooms - (Room Number, Latitude, Longitude)</br>
+<b>UI Changes:</b></br> 
+Left Side Sliding Menu - Give the user access to Events, Restrooms, Food, Offices</br>
 <b>Python Scraper:</b></br> Scrape Events</br>
 <b>Pathing System:</b></br> Design a better way to path possibly with Dijkstra's shortest path algorithm? Current issue is following the path around corners as creating the Polyline requires getting the edge before the turn</br>
