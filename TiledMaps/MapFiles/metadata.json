@@ -1,5 +1,5 @@
 {
-  "name": "MapFiles",
+  "name": "MapFilesNewest",
   "version": "1.1.0",
   "description": "",
   "attribution": "Rendered with <a href=\"https://www.maptiler.com/\">MapTiler</a>",
@@ -8,6 +8,6 @@
   "minzoom": "16",
   "maxzoom": "21",
   "scale": "1.000000",
-  "bounds": [-85.64283689, 42.25206558, -85.63750822, 42.25498596],
+  "bounds": [-85.64275270, 42.25209987, -85.63751983, 42.25501945],
   "profile": "mercator"
 }
