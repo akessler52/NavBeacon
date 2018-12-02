@@ -18,7 +18,7 @@ Makentoch React-Native-Beacons-Manager https://github.com/MacKentoch/react-nativ
 AirBnB's React-Native-Maps https://github.com/react-community/react-native-maps</br>
 React-Native-Elements https://github.com/react-native-training/react-native-elements</br>
 
-<b>Pathing Design:<b></br>
+<b>Pathing Design:</b></br>
 Array of Room Coordinates</br>
 Google-Maps PolyLines to draw the path</br>
 Google-Maps Marker to show end location</br>
