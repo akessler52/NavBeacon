@@ -60,7 +60,8 @@ var latitude = 42.254254;
 var longitude = -85.640700;
 var longitudeDelta = LONGITUDE_DELTA;
 var latitudeDelta = LATITUDE_DELTA;
-
+var beaconsArrVar = [];
+var usersLocationVar = {};
 // #region flow types
 type DetectedBeacon = {
   identifier: string,
@@ -188,11 +189,13 @@ class reactNativeBeaconExample extends Component<Props, State> {
           data.beacons,
           'rangingList',
         );
-        this._beaconsLists = updatedBeaconsLists;
+        //this._beaconsLists = updatedBeaconsLists;
+        beaconsArrVar = updatedBeaconsLists['rangingList'];
+        usersLocationVar = this.calculateNewCoordinate();
         //console.log("Updated beacons lists",updatedBeaconsLists);
         this.setState({
-          beaconsArr: updatedBeaconsLists['rangingList'],
-          usersLocation: this.calculateNewCoordinate()
+          //beaconsArr: updatedBeaconsLists['rangingList'],
+          //usersLocation: this.calculateNewCoordinate()
         });
       },
     );
@@ -244,17 +247,17 @@ class reactNativeBeaconExample extends Component<Props, State> {
     if(closeBeacons.length == 0 && closeBeacons[1] === undefined)
     {
       //console.log("Inside User Location Undefined");
-      return this.state.usersLocation; //Return 0 this will need to be catched by set marker position
+      return usersLocationVar; //Return 0 this will need to be catched by set marker position
     }
     else
     {
       //Set the variables
       let distA = closeBeacons[0].Distance;
       let distB = closeBeacons[1].Distance;
-      //Do Math to get the coordinate in between
       let distC = distA/(distA+distB);
+      //Do Math to get the coordinate in between
       distC = distC.toFixed(1);
-      //console.log("distC: ",distC);
+      console.log("distC: ",distC);
       let latA = closeBeacons[0].Lat;
       let latB = closeBeacons[1].Lat;
       let longA = closeBeacons[0].Long;
@@ -275,7 +278,8 @@ class reactNativeBeaconExample extends Component<Props, State> {
 
     var newCoordinate = [];
     //newCoordinate = this.calculateNewCoordinate();
-    newCoordinate = this.state.usersLocation;
+    newCoordinate = usersLocationVar;
+    console.log("newCoordinate",usersLocationVar);
     if(newCoordinate == 0)
     {
       var NewMarker = Marker.coordinate = null;
@@ -293,8 +297,8 @@ class reactNativeBeaconExample extends Component<Props, State> {
   findBeaconsClosest() {
     var i=0;
     var BeaconToReturn = [];
-    //console.log("BeaconsArr",this.state.beaconsArr);
-    if(this.state.beaconsArr === undefined || this.state.beaconsArr.length == 0)
+    //console.log("BeaconsArr",beaconsArrVar);
+    if(beaconsArrVar === undefined || beaconsArrVar.length == 0)
     {//If the Array is undefined or length is 0 return NULL handle this in the coordinate marker call
       BeaconToReturn = [];
       //console.log("CAUGHT EMPTY LIST");
@@ -302,17 +306,24 @@ class reactNativeBeaconExample extends Component<Props, State> {
     else
     {
       do{
-          BeaconToReturn[0] = BeaconsLocList[this.state.beaconsArr[i].minor-1];
-          BeaconToReturn[0].Distance = this.state.beaconsArr[i].accuracy;
+          BeaconToReturn[0] = BeaconsLocList[beaconsArrVar[i].minor-1];
+          BeaconToReturn[0].Distance = beaconsArrVar[i].accuracy;
           //console.log("Beacon Array position",i);
-          if(i < this.state.beaconsArr.length-1)
+          if(i < beaconsArrVar.length-1)
           {
-            BeaconToReturn[1] = BeaconsLocList[this.state.beaconsArr[i+1].minor-1];
-            BeaconToReturn[1].Distance = this.state.beaconsArr[i+1].accuracy;
+            BeaconToReturn[1] = BeaconsLocList[beaconsArrVar[i+1].minor-1];
+            BeaconToReturn[1].Distance = beaconsArrVar[i+1].accuracy;
           }
 
-      }while(this.state.beaconsArr[i++].accuracy < 0 && i < this.state.beaconsArr.length-1);
+      }while(beaconsArrVar[i++].accuracy < 0 && i < beaconsArrVar.length-1);
       //console.log("BeaconToReturn", BeaconToReturn);
+      let distDiff = BeaconToReturn[0].Distance - BeaconToReturn[1].Distance;
+      Math.abs(distDiff);
+
+      if(distDiff > 4)
+      {
+        BeaconToReturn = [];
+      }
     }
     return BeaconToReturn;
   }
@@ -334,7 +345,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
     let i = 0;
     let flag = 0;
     console.log("Inside Create Path");
-    startPoint = {latitude: this.state.usersLocation.newLat, longitude: this.state.usersLocation.newLong};
+    startPoint = {latitude: usersLocationVar.newLat, longitude: usersLocationVar.newLong};
     if(startPoint === undefined)
     {
       roomCoords = []; //When passing a null to PolyLine it will not place a line nor break anything
@@ -418,7 +429,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
   }
 
   onRegionChange(newRegion) {
-    if(this.state.followUserFlag == 1 && this.state.usersLocation) //Follow User
+    if(this.state.followUserFlag == 1 && usersLocationVar) //Follow User
     {
       this.state.followUserFlag = 0;
       latitude = newRegion.latitude;
@@ -426,7 +437,7 @@ class reactNativeBeaconExample extends Component<Props, State> {
       latitudeDelta = newRegion.latitudeDelta;
       longitudeDelta = newRegion.longitudeDelta;
     }
-    else if(this.state.followUserFlag == 0 && this.state.usersLocation) //Move Around Map
+    else if(this.state.followUserFlag == 0 && usersLocationVar) //Move Around Map
     {
       latitude = newRegion.latitude;
       longitude = newRegion.longitude;
@@ -504,10 +515,10 @@ class reactNativeBeaconExample extends Component<Props, State> {
     const { bluetoothState, beaconsLists, message} = this.state;
     this.createPathArray();
 
-    if(this.state.followUserFlag == 1 && this.state.usersLocation)
+    if(this.state.followUserFlag == 1 && usersLocationVar)
     {
-     latitude = this.state.usersLocation.newLat;
-     longitude = this.state.usersLocation.newLong;
+     latitude = usersLocationVar.newLat;
+     longitude = usersLocationVar.newLong;
      latitudeDelta = LATITUDE_DELTA;
      longitudeDelta = LONGITUDE_DELTA;
     }
