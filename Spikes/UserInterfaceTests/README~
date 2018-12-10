@@ -1,0 +1,8 @@
+This directory contains an example of the drawer navigation to be implemented in future releases of the project.
+
+There are screenshots of how this implementation could look.
+
+The UI is done with a drawer navigator (from the react-navigation package) that serves as a sliding menu which contains the different screens that the applicaiton needs such as the home(map) screen, offices screen, events screen etc.
+
+The Offices screen has a prototype of what it would be like to have the list of the faculty on the screen with the appropriate information.
+
